@@ -1,0 +1,7 @@
+BOSSA browser flasher implementation
+
+Files in bossa-bundle.js are derived from the BOSSA JavaScript implementation distributed by drunken-octopus/drunken-octopus-downloader.
+Source: https://github.com/drunken-octopus/drunken-octopus-downloader
+Copyright (C) 2020 ShumaTech; Ultimaker B.V.; Aleph Objects, Inc.; SynDaver Labs, Inc.
+Licensed under GNU Lesser General Public License v3.0 or later (LGPL-3.0-or-later). See https://www.gnu.org/licenses/lgpl-3.0.html
+The original copyright and license notices are retained in bossa-bundle.js.

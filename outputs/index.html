@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f5f5f1" />
+    <title>LulzBot Firmware Utility</title>
+    <style>
+      :root {
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+        color: #202521;
+        background: #f5f5f1;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        --green: #34775b;
+        --muted: #68716b;
+        --line: #dce1db;
+        --surface: #fff;
+        --amber: #9b6418;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+      .top {
+        height: 72px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        padding: 0 max(24px, calc((100vw - 1060px) / 2));
+        gap: 13px;
+        background: #fbfbf8;
+      }
+      .logo {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--green);
+        color: white;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        letter-spacing: -1px;
+      }
+      .brand {
+        font-size: 15px;
+        font-weight: 720;
+      }
+      .brand small {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+        margin-top: 2px;
+      }
+      .wrap {
+        max-width: 1060px;
+        margin: 0 auto;
+        padding: 38px 24px 72px;
+      }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        font-size: 11px;
+        font-weight: 750;
+        color: var(--green);
+      }
+      h1 {
+        font-size: 34px;
+        letter-spacing: -1.2px;
+        margin: 9px 0 8px;
+      }
+      .intro {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0 0 26px;
+        max-width: 650px;
+      }
+      .warning {
+        border: 1px solid #e9d9b7;
+        background: #fffaf0;
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: flex;
+        gap: 12px;
+        margin: 22px 0 28px;
+        color: #604a2a;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+      .warning strong {
+        display: block;
+        color: #44351e;
+        margin-bottom: 2px;
+      }
+      .warn-icon {
+        font-size: 18px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1.45fr 0.8fr;
+        gap: 18px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        padding: 22px;
+        box-shadow: 0 2px 8px #263a2a08;
+      }
+      .card h2 {
+        font-size: 17px;
+        margin: 0 0 5px;
+        letter-spacing: -0.25px;
+      }
+      .sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0 0 20px;
+      }
+      .step {
+        display: flex;
+        gap: 13px;
+        margin-bottom: 20px;
+      }
+      .num {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: #e8f1eb;
+        color: var(--green);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 750;
+        flex: none;
+      }
+      .stepbody {
+        flex: 1;
+      }
+      .label {
+        font-size: 13px;
+        font-weight: 680;
+        display: block;
+        margin: 3px 0 8px;
+      }
+      .filebox {
+        border: 1px dashed #bcc9be;
+        border-radius: 10px;
+        padding: 14px;
+        background: #fbfcfa;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .filemark {
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        background: #e8f1eb;
+        color: var(--green);
+        display: grid;
+        place-items: center;
+        font-size: 17px;
+      }
+      .filemeta {
+        min-width: 0;
+        flex: 1;
+      }
+      .filemeta b {
+        font-size: 13px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .filemeta span {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 8px;
+        padding: 9px 12px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+        color: #29322b;
+      }
+      .btn:hover {
+        background: #f4f7f3;
+      }
+      .btn.primary {
+        background: var(--green);
+        color: #fff;
+        border-color: var(--green);
+        padding: 12px 15px;
+        font-size: 13px;
+      }
+      .btn.primary:hover {
+        background: #286147;
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .portline {
+        display: flex;
+        gap: 9px;
+        align-items: center;
+      }
+      .portline .btn {
+        white-space: nowrap;
+      }
+      .portstatus {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .help {
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.5;
+        margin-top: 8px;
+      }
+      .check {
+        display: flex;
+        gap: 9px;
+        align-items: flex-start;
+        font-size: 12px;
+        line-height: 1.45;
+        color: #4b554e;
+        margin: 4px 0 17px;
+      }
+      .check input {
+        accent-color: var(--green);
+        margin-top: 2px;
+      }
+      .flashrow {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .state {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .state[data-kind="success"] {
+        color: var(--green);
+      }
+      .state[data-kind="error"] {
+        color: #a23c36;
+      }
+      .progress {
+        height: 5px;
+        background: #edf0ec;
+        border-radius: 5px;
+        margin: 17px 0 7px;
+        overflow: hidden;
+      }
+      .bar {
+        height: 100%;
+        width: 0;
+        background: var(--green);
+        transition: none;
+      }
+      .log {
+        font:
+          11px/1.55 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        color: #66716a;
+        max-height: 105px;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+      .sidecard {
+        margin-bottom: 18px;
+      }
+      .pill {
+        display: inline-flex;
+        border-radius: 20px;
+        background: #edf3ee;
+        color: #387052;
+        font-size: 10px;
+        font-weight: 750;
+        padding: 5px 9px;
+        margin-bottom: 13px;
+      }
+      .compat {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .compat b {
+        color: #323b34;
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 15px 0;
+      }
+      .link {
+        color: var(--green);
+        text-decoration: none;
+        font-weight: 650;
+      }
+      .foot {
+        font-size: 11px;
+        color: #7b847d;
+        margin-top: 26px;
+        text-align: center;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 760px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .wrap {
+          padding-top: 27px;
+        }
+        h1 {
+          font-size: 29px;
+        }
+        .portline {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .card {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="logo">L</div>
+      <div class="brand">
+        LulzBot Firmware Utility<small>Browser based flashing prototype</small>
+      </div>
+    </header>
+    <main class="wrap">
+      <div class="eyebrow">Firmware tools · Preview</div>
+      <h1>Flash a firmware file</h1>
+      <p class="intro">
+        Choose a local firmware image, connect to a compatible Atmel SAM board
+        over USB, and write it directly from your browser.
+      </p>
+      <div class="warning">
+        <span class="warn-icon">⚠</span>
+        <div>
+          <strong>Confirm your board and firmware before continuing</strong>This
+          operation erases existing firmware. This prototype only supports
+          SAM-BA/BOSSA compatible boards and raw <code>.bin</code> images. Most
+          classic LulzBot Mini and TAZ printers use AVR/RAMBo boards and require
+          a different flasher. The browser flash sequence has not yet been
+          tested on a physical TAZ Pro.
+        </div>
+      </div>
+      <div class="layout">
+        <section class="card">
+          <h2>Manual flash</h2>
+          <p class="sub">
+            Connect the board, select its bootloader port, then write and
+            verify.
+          </p>
+          <div class="step">
+            <span class="num">1</span>
+            <div class="stepbody">
+              <span class="label">Firmware image</span>
+              <div class="filebox">
+                <div class="filemark">▧</div>
+                <div class="filemeta">
+                  <b id="filename">No file selected</b
+                  ><span id="filesize">Select a .bin firmware image</span>
+                </div>
+                <label class="btn" for="firmware">Choose file</label
+                ><input
+                  id="firmware"
+                  type="file"
+                  accept=".bin,application/octet-stream"
+                />
+              </div>
+              <div class="help">
+                The browser reads the file locally. It is not uploaded to a
+                server.
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">2</span>
+            <div class="stepbody">
+              <span class="label">Printer bootloader</span>
+              <div class="portline">
+                <button class="btn" id="connect">Connect to printer</button
+                ><span class="portstatus" id="portstatus"
+                  >No device connected</span
+                >
+              </div>
+              <div class="help">
+                Use Chromium on HTTPS or localhost and select the BOSSA Program
+                Port. For the TAZ Pro, hold ERASE while powering on. This page
+                verifies the ATSAM3X8E before enabling flash.
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">3</span>
+            <div class="stepbody">
+              <span class="label">Write firmware</span
+              ><label class="check"
+                ><input type="checkbox" id="ack" /><span
+                  >I have confirmed that this firmware matches my exact printer
+                  controller and configuration.</span
+                ></label
+              >
+              <div class="flashrow">
+                <button class="btn primary" id="flash" disabled>
+                  Erase, flash &amp; verify</button
+                ><span class="state" id="state" aria-live="polite"
+                  >Select a file and connect a board to continue.</span
+                >
+              </div>
+              <div class="progress"><div class="bar" id="bar"></div></div>
+              <div class="log" id="log" aria-live="polite"></div>
+            </div>
+          </div>
+        </section>
+        <aside>
+          <section class="card sidecard">
+            <span class="pill">TARGET BOARD</span>
+            <h2>TAZ Pro · Archim2</h2>
+            <p class="compat">
+              ATSAM3X8E with BOSSA/SAM-BA bootloader. Expected flash: 512 KB at
+              0x80000, 2,048 pages × 256 bytes. Flash is enabled only after the
+              ROM reports the SAM3X8E chip ID.
+            </p>
+            <div class="divider"></div>
+            <p class="compat">
+              <b>Still unsupported:</b> AVR/RAMBo firmware, Intel HEX files,
+              UF2, and other controller families.
+            </p>
+          </section>
+          <section class="card">
+            <h2>Before you flash</h2>
+            <p class="compat">
+              Use a known-good firmware image for the exact board and
+              configuration. Keep the printer powered and connected directly by
+              USB. Do not disconnect during erase, write, or verify. The image
+              is read locally and is not uploaded to the web server.
+            </p>
+            <div class="divider"></div>
+            <p class="compat">
+              This prototype checks for an ATSAM3X8E board, but it cannot
+              determine whether the firmware matches your printer model,
+              toolhead, or options.
+            </p>
+          </section>
+        </aside>
+      </div>
+      <div class="foot">
+        Local only · No firmware upload · Web Serial support required
+      </div>
+    </main>
+    <script src="bossa-bundle.js"></script>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let file = null,
+        port = null,
+        transport = null,
+        programmer = null,
+        busy = false,
+        chipValidated = false,
+        phaseBase = 0,
+        phaseScale = 45;
+      const EXPECTED_CHIP = 0x285e0a60,
+        MAX_FLASH_BYTES = 512 * 1024;
+      const say = (msg, kind = "") => {
+        $("state").textContent = msg;
+        $("state").dataset.kind = kind;
+      };
+      const log = (msg) => {
+        const el = $("log");
+        const lines = (el.textContent + msg + "\n").split("\n");
+        el.textContent = lines.slice(-80).join("\n");
+        el.scrollTop = el.scrollHeight;
+      };
+      function update() {
+        $("flash").disabled = !(
+          file &&
+          port &&
+          chipValidated &&
+          $("ack").checked &&
+          !busy
+        );
+      }
+      class WebSerialTransport {
+        constructor(device) {
+          this.device = device;
+          this.reader = null;
+          this.writer = null;
+          this.pendingRead = null;
+          this.buffer = new Uint8Array(0);
+          this.encoder = new TextEncoder();
+          this.isOpen = false;
+        }
+        async open(baudRate) {
+          await this.device.open({ baudRate, bufferSize: 65536 });
+          this.isOpen = true;
+          this.reader = this.device.readable.getReader();
+          this.writer = this.device.writable.getWriter();
+        }
+        _nextRead() {
+          if (!this.pendingRead)
+            this.pendingRead = this.reader.read().then(
+              (v) => {
+                this.pendingRead = null;
+                return v;
+              },
+              (e) => {
+                this.pendingRead = null;
+                throw e;
+              },
+            );
+          return this.pendingRead;
+        }
+        async read(length) {
+          const output = new Uint8Array(length);
+          for (let i = 0; i < length; ) {
+            if (this.buffer.length === 0) {
+              let timer;
+              try {
+                const { value, done } = await Promise.race([
+                  this._nextRead(),
+                  new Promise(
+                    (_, reject) =>
+                      (timer = setTimeout(
+                        () =>
+                          reject(
+                            new Error(
+                              `Timed out waiting for BOSSA serial data (${i}/${length} bytes received)`,
+                            ),
+                          ),
+                        15000,
+                      )),
+                  ),
+                ]);
+                if (done)
+                  throw new Error(
+                    "Printer disconnected during BOSSA communication",
+                  );
+                this.buffer = value || new Uint8Array(0);
+              } finally {
+                clearTimeout(timer);
+              }
+            }
+            const take = Math.min(length - i, this.buffer.length);
+            output.set(this.buffer.subarray(0, take), i);
+            i += take;
+            this.buffer = this.buffer.slice(take);
+          }
+          return output;
+        }
+        write(data) {
+          return this.writer.write(
+            typeof data === "string" ? this.encoder.encode(data) : data,
+          );
+        }
+        flush() {
+          return Promise.resolve();
+        }
+        wait(ms) {
+          return new Promise((resolve) => setTimeout(resolve, ms));
+        }
+        setDTR(value) {
+          return this.device.setSignals({ dataTerminalReady: value });
+        }
+        getInfo() {
+          return this.device.getInfo();
+        }
+        async close() {
+          try {
+            if (this.reader) await this.reader.cancel();
+          } catch (e) {}
+          try {
+            if (this.writer) this.writer.releaseLock();
+          } catch (e) {}
+          try {
+            if (this.reader) this.reader.releaseLock();
+          } catch (e) {}
+          try {
+            if (this.isOpen) await this.device.close();
+          } catch (e) {}
+          this.isOpen = false;
+          this.reader = this.writer = null;
+        }
+      }
+      $("firmware").addEventListener("change", (e) => {
+        file = e.target.files[0] || null;
+        $("filename").textContent = file ? file.name : "No file selected";
+        $("filesize").textContent = file
+          ? `${(file.size / 1024).toFixed(1)} KB · ${file.size.toLocaleString()} bytes`
+          : "Select a .bin firmware image";
+        if (file && !file.name.toLowerCase().endsWith(".bin")) {
+          file = null;
+          say("Choose a raw .bin image.", "error");
+        } else if (file && file.size > MAX_FLASH_BYTES) {
+          file = null;
+          $("firmware").value = "";
+          $("filename").textContent = "No file selected";
+          $("filesize").textContent = "Maximum ATSAM3X8E image size is 512 KB";
+          say("This image is too large for ATSAM3X8E flash.", "error");
+        } else
+          say(
+            file
+              ? "Image ready. Confirm the board before flashing."
+              : "Select a file and connect a board to continue.",
+          );
+        update();
+      });
+      $("ack").addEventListener("change", update);
+      if (!("serial" in navigator)) {
+        $("connect").disabled = true;
+        $("portstatus").textContent =
+          "Web Serial unavailable — use Chromium over HTTPS or localhost";
+      }
+      async function disconnect() {
+        busy = true;
+        update();
+        try {
+          if (transport) await transport.close();
+        } finally {
+          port = transport = programmer = null;
+          chipValidated = false;
+          $("portstatus").textContent = "No device connected";
+          $("connect").textContent = "Connect to printer";
+          $("connect").onclick = connectHandler;
+          say("Disconnected.");
+          busy = false;
+          update();
+        }
+      }
+      async function connectHandler() {
+        busy = true;
+        update();
+        let candidate = null;
+        try {
+          candidate = await navigator.serial.requestPort();
+          transport = new WebSerialTransport(candidate);
+          transport.onRetry = (msg) => {
+            say(msg);
+            log(msg);
+          };
+          programmer = new BOSSAApi.BOSSA();
+          programmer.onProgress = (p) => {
+            $("bar").style.width =
+              `${Math.min(95, phaseBase + p * phaseScale)}%`;
+          };
+          programmer.onStatus = (msg) => {
+            say(msg);
+            if (
+              !/^(Loading page|Checking page|Programming page|Verifying page)/.test(
+                msg,
+              )
+            )
+              log(msg);
+          };
+          say("Connecting to BOSSA bootloader and checking chip…");
+          await programmer.connect(transport);
+          log("Port opened at 921600 baud.");
+          const chip = programmer.chip.chip_id >>> 0;
+          log(`Bootloader: ${programmer.version}`);
+          log(`Chip ID: 0x${chip.toString(16).toUpperCase()}`);
+          if (chip !== EXPECTED_CHIP)
+            throw new Error(
+              `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
+            );
+          chipValidated = true;
+          port = candidate;
+          $("portstatus").textContent =
+            "ATSAM3X8E detected · BOSSA Program Port";
+          $("connect").textContent = "Disconnect";
+          $("connect").onclick = disconnect;
+          say(
+            "ATSAM3X8E verified. Select matching firmware and confirm to continue.",
+            "success",
+          );
+          log("BOSSA connection and chip identification successful.");
+        } catch (e) {
+          chipValidated = false;
+          say(`Could not validate BOSSA bootloader: ${e.message}`, "error");
+          log(`Connection check: ${e.message}`);
+          if (transport) await transport.close();
+          port = transport = programmer = null;
+          $("portstatus").textContent = "No validated device";
+          $("connect").textContent = "Connect to printer";
+          $("connect").onclick = connectHandler;
+        } finally {
+          busy = false;
+          update();
+        }
+      }
+      $("connect").onclick = connectHandler;
+      $("flash").addEventListener("click", async () => {
+        if (!file || !port || !programmer || !chipValidated || busy) return;
+        busy = true;
+        $("log").textContent = "";
+        $("bar").style.width = "0";
+        update();
+        try {
+          const data = await file.arrayBuffer();
+          if (data.byteLength === 0)
+            throw new Error("The selected image is empty.");
+          if (data.byteLength > MAX_FLASH_BYTES)
+            throw new Error(
+              "Image exceeds the ATSAM3X8E 512 KB flash capacity.",
+            );
+          log(`Image size: ${data.byteLength.toLocaleString()} bytes`);
+          phaseBase = 0;
+          phaseScale = 45;
+          say("Erasing and writing firmware…");
+          await programmer.flash_firmware(data);
+          log("Write complete.");
+          phaseBase = 50;
+          phaseScale = 45;
+          $("bar").style.width = "50%";
+          say("Verifying firmware…");
+          await programmer.verify_firmware(data);
+          log("Verify successful.");
+          $("bar").style.width = "96%";
+          say("Setting boot-from-flash and restarting…");
+          await programmer.enable_boot_flag();
+          await programmer.reset_and_close();
+          $("bar").style.width = "100%";
+          port = transport = programmer = null;
+          chipValidated = false;
+          $("portstatus").textContent = "Printer restarted";
+          $("connect").textContent = "Connect to printer";
+          $("connect").onclick = connectHandler;
+          say("Flash and verify completed. Printer restarted.", "success");
+        } catch (e) {
+          say(`Flash failed: ${e.message}`, "error");
+          log(`ERROR: ${e.message}`);
+          if (transport) await transport.close();
+          port = transport = programmer = null;
+          chipValidated = false;
+          $("portstatus").textContent = "Disconnected after flash error";
+          $("connect").textContent = "Reconnect to printer";
+          $("connect").onclick = connectHandler;
+        } finally {
+          busy = false;
+          update();
+        }
+      });
+    </script>
+  </body>
+</html>
