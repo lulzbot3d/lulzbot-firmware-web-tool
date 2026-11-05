@@ -3,7 +3,38 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f5f5f1" />
+    <meta name="theme-color" content="#c1d82f" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="https://www.lulzbot.com/next-public/apple-touch-icon.png?v=2"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="https://www.lulzbot.com/next-public/favicon-32x32.png?v=2"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="https://www.lulzbot.com/next-public/favicon-16x16.png?v=2"
+    />
+    <link
+      rel="manifest"
+      href="https://www.lulzbot.com/next-public/site.webmanifest?v=2"
+    />
+    <link
+      rel="mask-icon"
+      href="https://www.lulzbot.com/next-public/safari-pinned-tab.svg?v=2"
+      color="#5bbad5"
+    />
+    <link
+      rel="shortcut icon"
+      href="https://www.lulzbot.com/next-public/favicon.ico?v=2"
+    />
+    <meta name="msapplication-TileColor" content="#da532c" />
     <title>LulzBot Firmware Utility</title>
     <style>
       :root {
@@ -18,7 +49,10 @@
         background: #f5f5f1;
         font-synthesis: none;
         text-rendering: optimizeLegibility;
-        --green: #34775b;
+        --brand-green: #c1d82f;
+        --brand-green-light: #e2e868;
+        --brand-green-dark: #788814;
+        --green: var(--brand-green-dark);
         --muted: #68716b;
         --line: #dce1db;
         --surface: #fff;
@@ -41,15 +75,11 @@
         background: #fbfbf8;
       }
       .logo {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
-        background: var(--green);
-        color: white;
-        display: grid;
-        place-items: center;
-        font-weight: 800;
-        letter-spacing: -1px;
+        display: block;
+        width: 148px;
+        height: auto;
+        flex: none;
+        fill: #171a08;
       }
       .brand {
         font-size: 15px;
@@ -137,7 +167,7 @@
         width: 25px;
         height: 25px;
         border-radius: 50%;
-        background: #e8f1eb;
+        background: var(--brand-green-light);
         color: var(--green);
         display: grid;
         place-items: center;
@@ -167,7 +197,7 @@
         width: 36px;
         height: 36px;
         border-radius: 9px;
-        background: #e8f1eb;
+        background: var(--brand-green-light);
         color: var(--green);
         display: grid;
         place-items: center;
@@ -202,18 +232,37 @@
         cursor: pointer;
         color: #29322b;
       }
+      button[hidden] {
+        display: none;
+      }
       .btn:hover {
         background: #f4f7f3;
       }
       .btn.primary {
-        background: var(--green);
-        color: #fff;
-        border-color: var(--green);
+        background: var(--brand-green);
+        color: #171a08;
+        border-color: var(--brand-green-dark);
         padding: 12px 15px;
         font-size: 13px;
       }
       .btn.primary:hover {
-        background: #286147;
+        background: #b2c823;
+      }
+      .btn.next-action {
+        color: #171a08;
+        background: var(--brand-green);
+        border-color: var(--brand-green-dark);
+        box-shadow: 0 0 0 3px #c1d82f70;
+      }
+      .btn.primary.next-action {
+        background: var(--brand-green);
+        border-color: var(--brand-green-dark);
+        box-shadow: 0 0 0 4px #c1d82f80;
+      }
+      .filebox.next-action {
+        border: 2px solid var(--brand-green-dark);
+        background: #f8fae9;
+        box-shadow: 0 0 0 4px #78881440;
       }
       .btn:disabled {
         opacity: 0.45;
@@ -295,8 +344,8 @@
       .pill {
         display: inline-flex;
         border-radius: 20px;
-        background: #edf3ee;
-        color: #387052;
+        background: var(--brand-green-light);
+        color: var(--brand-green-dark);
         font-size: 10px;
         font-weight: 750;
         padding: 5px 9px;
@@ -351,9 +400,37 @@
   </head>
   <body>
     <header class="top">
-      <div class="logo">L</div>
+      <svg
+        class="logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1920 267.04"
+        role="img"
+        aria-label="LulzBot"
+      >
+        <path
+          d="M168.58,202.15c1.98,0,3.6,.71,4.86,2.12,1.24,1.41,1.84,3.12,1.84,5.15v50.34c0,2.06-.6,3.77-1.84,5.18-1.26,1.41-2.88,2.12-4.86,2.12H7.12C2.34,267.04,0,264.59,0,259.75V7.26C0,2.45,2.34,0,7.12,0H58.7c4.71,0,7.09,2.45,7.09,7.26V195.31c0,2.02,.68,3.65,2.07,4.93,1.35,1.29,3.04,1.9,5.04,1.9h95.69"
+        />
+        <path
+          d="M466.63,2.12c1.35,1.4,2.04,3.09,2.04,5.15V216.67h-.35c0,2.02-.25,4.2-.75,6.49-.51,2.27-1.11,4.16-1.86,5.73l-34.38,35.08c-1.74,.98-3.94,1.78-6.54,2.27-2.61,.53-4.93,.8-6.94,.8h-118.47c-2.01,0-4.23-.27-6.73-.8-2.49-.49-4.62-1.29-6.36-2.27l-34.38-35.08c-.99-1.81-1.77-3.95-2.25-6.53-.51-2.52-.75-4.82-.75-6.86V7.26c0-2.05,.69-3.74,2.07-5.15,1.35-1.41,3.04-2.12,5.05-2.12h51.57c1.98,0,3.67,.71,5.05,2.12,1.38,1.4,2.07,3.09,2.07,5.15V195.31c0,2.02,.66,3.77,2.04,5.12,1.35,1.4,3.06,2.11,5.04,2.11h74.01c1.98,0,3.64-.71,4.87-2.11,1.23-1.35,1.86-3.1,1.86-5.12V7.26c0-2.05,.69-3.74,2.04-5.15,1.38-1.41,3.06-2.12,5.07-2.12h51.94c1.98,0,3.69,.71,5.04,2.12"
+        />
+        <path
+          d="M733.68,202.15c1.98,0,3.6,.71,4.87,2.12,1.26,1.41,1.86,3.12,1.86,5.15v50.34c0,2.06-.6,3.77-1.86,5.18-1.26,1.41-2.88,2.12-4.87,2.12h-161.46c-4.74,0-7.09-2.45-7.09-7.29V7.26c0-4.81,2.34-7.26,7.09-7.26h51.58c4.74,0,7.12,2.45,7.12,7.26V195.31c0,2.02,.66,3.65,2.04,4.93,1.38,1.29,3.04,1.9,5.05,1.9h95.68"
+        />
+        <path
+          d="M1013.67,55.33c0,2.02-.51,4.2-1.54,6.49-.98,2.27-2.13,4.16-3.33,5.69l-121.5,139.62h119.25c1.98,0,3.66,.67,5.01,2.09,1.38,1.4,2.11,3.12,2.11,5.15v45.37c0,2.06-.72,3.77-2.11,5.18-1.35,1.41-3.03,2.12-5.01,2.12h-185.78c-4.71,0-7.12-2.45-7.12-7.29v-47.67c0-2.02,.45-4.26,1.32-6.65,.87-2.42,1.92-4.41,3.18-5.91l124.09-139.62h-119.22c-2.01,0-3.7-.71-5.04-2.12-1.38-1.38-2.08-3.09-2.08-5.11V7.26c0-2.05,.69-3.74,2.08-5.15,1.35-1.41,3.03-2.12,5.04-2.12h183.53c1.98,0,3.66,.71,5.01,2.12,1.38,1.4,2.11,3.09,2.11,5.15V55.33"
+        />
+        <path
+          d="M1169.87,208.67h100.54v-51.9h-100.54v51.9Zm0-103h100.54V58h-100.54v47.67Zm157.34-67.53c.75,1.78,1.44,4.02,2.04,6.68,.63,2.67,.96,5.02,.96,7.04v42.35c0,2.05-.45,4.29-1.32,6.67-.87,2.45-1.92,4.42-3.18,5.91l-16.06,20.99c-1.26,1.53-1.83,3.44-1.68,5.73,.12,2.3,.78,4.05,2.07,5.33l15.31,19.09c1.23,1.5,2.37,3.49,3.37,5.91,.99,2.38,1.5,4.63,1.5,6.67v44.98c0,2.05-.33,4.35-.96,6.86-.6,2.57-1.29,4.71-2.04,6.53l-34.37,35.08c-1.78,.98-3.94,1.78-6.55,2.27-2.64,.53-4.92,.8-6.9,.8h-161.85c-4.74,0-7.12-2.45-7.12-7.29V7.26c0-2.05,.69-3.74,2.08-5.15,1.38-1.41,3.04-2.12,5.04-2.12h161.85c1.98,0,4.27,.34,6.9,.95,2.61,.64,4.77,1.35,6.55,2.12l34.37,35.08"
+        />
+        <path
+          d="M1490.53,202.55h87.85V64.89h-87.85V202.55Zm151.05-164.4c.75,1.78,1.41,3.95,2.04,6.49,.63,2.55,.96,4.85,.96,6.86V215.51c0,2.05-.33,4.35-.96,6.86-.63,2.57-1.29,4.71-2.04,6.53l-34.41,35.08c-1.74,.98-3.93,1.78-6.54,2.27-2.58,.53-4.93,.8-6.91,.8h-118.5c-1.98,0-4.23-.27-6.72-.8-2.49-.49-4.59-1.29-6.33-2.27l-34.4-35.08c-.96-1.81-1.74-3.95-2.23-6.53-.51-2.52-.75-4.82-.75-6.86V51.5c0-2.02,.24-4.31,.75-6.86,.48-2.54,1.27-4.71,2.23-6.49l34.4-35.08c1.74-.77,3.84-1.47,6.33-2.12,2.5-.61,4.74-.95,6.72-.95h118.5c1.98,0,4.33,.34,6.91,.95,2.61,.64,4.8,1.35,6.54,2.12l34.41,35.08"
+        />
+        <path
+          d="M1920,57.63c0,2.02-.68,3.7-2.04,5.11-1.41,1.41-3.07,2.14-5.04,2.14h-53.08c-1.98,0-3.66,.62-5.07,1.87-1.35,1.25-2.04,2.94-2.04,4.96v188.02c0,2.06-.64,3.77-1.87,5.18-1.26,1.41-2.88,2.12-4.87,2.12h-51.93c-2.04,0-3.7-.71-5.07-2.12-1.35-1.4-2.04-3.12-2.04-5.18V71.73c0-2.02-.63-3.71-1.86-4.96-1.23-1.25-2.88-1.87-4.83-1.87h-53.11c-1.98,0-3.67-.73-5.05-2.14-1.34-1.41-2.04-3.1-2.04-5.11V7.26c0-4.81,2.34-7.26,7.09-7.26h185.78c1.98,0,3.63,.71,5.04,2.12,1.35,1.4,2.04,3.09,2.04,5.15V57.63"
+        />
+      </svg>
       <div class="brand">
-        LulzBot Firmware Utility<small>Browser based flashing prototype</small>
+        Firmware Utility<small>Browser based flashing prototype</small>
       </div>
     </header>
     <main class="wrap">
@@ -378,7 +455,7 @@
         <section class="card">
           <h2>Manual flash</h2>
           <p class="sub">
-            Connect the board, select its bootloader port, then write and
+            Choose a firmware image, connect the printer, then write and
             verify.
           </p>
           <div class="step">
@@ -391,7 +468,11 @@
                   <b id="filename">No file selected</b
                   ><span id="filesize">Select a .bin firmware image</span>
                 </div>
-                <label class="btn" for="firmware">Choose file</label
+                <label
+                  class="btn"
+                  id="chooseFile"
+                  for="firmware"
+                  >Choose file</label
                 ><input
                   id="firmware"
                   type="file"
@@ -407,7 +488,7 @@
           <div class="step">
             <span class="num">2</span>
             <div class="stepbody">
-              <span class="label">Printer bootloader</span>
+              <span class="label">Connect printer</span>
               <div class="portline">
                 <button class="btn" id="connect">Connect to printer</button
                 ><span class="portstatus" id="portstatus"
@@ -415,9 +496,13 @@
                 >
               </div>
               <div class="help">
-                Use Chromium on HTTPS or localhost and select the BOSSA Program
-                Port. For the TAZ Pro, hold ERASE while powering on. This page
-                verifies the ATSAM3X8E before enabling flash.
+                Use Chromium on HTTPS or localhost. If the printer is running
+                Marlin, this page can restart it into its bootloader. If that
+                changes the port, you will select the printer again when you
+                start flashing in step 3. Windows may label it “Bossa Program
+                Port”. If Marlin is not running, hold ERASE
+                while powering on, then connect directly to the bootloader.
+                This page verifies the ATSAM3X8E before enabling flash.
               </div>
             </div>
           </div>
@@ -488,10 +573,13 @@
         programmer = null,
         busy = false,
         chipValidated = false,
+        bootloaderSelectionRequired = false,
         phaseBase = 0,
         phaseScale = 45;
       const EXPECTED_CHIP = 0x285e0a60,
-        MAX_FLASH_BYTES = 512 * 1024;
+        MAX_FLASH_BYTES = 512 * 1024,
+        MARLIN_FILTER = { usbVendorId: 0x27b1, usbProductId: 0x0001 },
+        BOOTLOADER_FILTER = { usbVendorId: 0x03eb, usbProductId: 0x6124 };
       const say = (msg, kind = "") => {
         $("state").textContent = msg;
         $("state").dataset.kind = kind;
@@ -503,12 +591,28 @@
         el.scrollTop = el.scrollHeight;
       };
       function update() {
-        $("flash").disabled = !(
+        const canFlash = Boolean(
           file &&
           port &&
           chipValidated &&
           $("ack").checked &&
           !busy
+        );
+        const canSelectBootloader = Boolean(
+          file && bootloaderSelectionRequired && $("ack").checked && !busy
+        );
+        $("flash").disabled = !(canFlash || canSelectBootloader);
+        $("chooseFile").classList.toggle("next-action", !file && !busy);
+        $("firmware")
+          .closest(".filebox")
+          .classList.toggle("next-action", !file && !busy);
+        $("connect").classList.toggle(
+          "next-action",
+          Boolean(file && !port && !bootloaderSelectionRequired && !busy),
+        );
+        $("flash").classList.toggle(
+          "next-action",
+          Boolean((canFlash || canSelectBootloader) && !busy),
         );
       }
       class WebSerialTransport {
@@ -529,16 +633,7 @@
         }
         _nextRead() {
           if (!this.pendingRead)
-            this.pendingRead = this.reader.read().then(
-              (v) => {
-                this.pendingRead = null;
-                return v;
-              },
-              (e) => {
-                this.pendingRead = null;
-                throw e;
-              },
-            );
+            this.pendingRead = this.reader.read();
           return this.pendingRead;
         }
         async read(length) {
@@ -546,9 +641,11 @@
           for (let i = 0; i < length; ) {
             if (this.buffer.length === 0) {
               let timer;
+              let pendingRead;
               try {
+                pendingRead = this._nextRead();
                 const { value, done } = await Promise.race([
-                  this._nextRead(),
+                  pendingRead,
                   new Promise(
                     (_, reject) =>
                       (timer = setTimeout(
@@ -558,15 +655,27 @@
                               `Timed out waiting for BOSSA serial data (${i}/${length} bytes received)`,
                             ),
                           ),
-                        15000,
+                        5000, // Match Drunken Octopus's 5-second read timeout.
                       )),
                   ),
                 ]);
+                // Keep an unread result after a timeout. A late USB read must
+                // remain available to the next caller instead of being lost.
+                this.pendingRead = null;
                 if (done)
                   throw new Error(
                     "Printer disconnected during BOSSA communication",
                   );
                 this.buffer = value || new Uint8Array(0);
+              } catch (error) {
+                if (pendingRead) {
+                  pendingRead.catch(() => {
+                    if (this.pendingRead === pendingRead) {
+                      this.pendingRead = null;
+                    }
+                  });
+                }
+                throw error;
               } finally {
                 clearTimeout(timer);
               }
@@ -584,7 +693,10 @@
           );
         }
         flush() {
-          return Promise.resolve();
+          // BOSSAC's Windows USB serial flush sleeps for 1 ms. The SAM-BA
+          // ROM can misparse adjacent commands and binary data if the USB
+          // driver combines them into one packet.
+          return this.wait(1);
         }
         wait(ms) {
           return new Promise((resolve) => setTimeout(resolve, ms));
@@ -649,6 +761,7 @@
         } finally {
           port = transport = programmer = null;
           chipValidated = false;
+          bootloaderSelectionRequired = false;
           $("portstatus").textContent = "No device connected";
           $("connect").textContent = "Connect to printer";
           $("connect").onclick = connectHandler;
@@ -662,69 +775,122 @@
         update();
         let candidate = null;
         try {
-          candidate = await navigator.serial.requestPort();
-          transport = new WebSerialTransport(candidate);
-          transport.onRetry = (msg) => {
-            say(msg);
-            log(msg);
-          };
-          programmer = new BOSSAApi.BOSSA();
-          programmer.onProgress = (p) => {
-            $("bar").style.width =
-              `${Math.min(95, phaseBase + p * phaseScale)}%`;
-          };
-          programmer.onStatus = (msg) => {
-            say(msg);
-            if (
-              !/^(Loading page|Checking page|Programming page|Verifying page)/.test(
-                msg,
-              )
-            )
-              log(msg);
-          };
-          say("Connecting to BOSSA bootloader and checking chip…");
-          await programmer.connect(transport);
-          log("Port opened at 921600 baud.");
-          const chip = programmer.chip.chip_id >>> 0;
-          log(`Bootloader: ${programmer.version}`);
-          log(`Chip ID: 0x${chip.toString(16).toUpperCase()}`);
-          if (chip !== EXPECTED_CHIP)
-            throw new Error(
-              `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
+          candidate = await navigator.serial.requestPort({
+            filters: [MARLIN_FILTER, BOOTLOADER_FILTER],
+          });
+          const info = candidate.getInfo();
+          const isMarlin =
+            info.usbVendorId === MARLIN_FILTER.usbVendorId &&
+            info.usbProductId === MARLIN_FILTER.usbProductId;
+
+          if (isMarlin) {
+            say("Restarting printer into its bootloader…");
+            log("Marlin printer selected; requesting bootloader reset.");
+            const resetTransport = new WebSerialTransport(candidate);
+            try {
+              await resetTransport.open(1200);
+              await resetTransport.setDTR(true);
+              await resetTransport.wait(100);
+              await resetTransport.setDTR(false);
+            } finally {
+              await resetTransport.close();
+            }
+            await new Promise((resolve) => setTimeout(resolve, 5000));
+            bootloaderSelectionRequired = true;
+            port = transport = programmer = null;
+            chipValidated = false;
+            $("portstatus").textContent = "Printer restarted; bootloader ready";
+            say(
+              "Printer restarted. Confirm the firmware in step 3, then select its bootloader port.",
+              "success",
             );
-          chipValidated = true;
-          port = candidate;
-          $("portstatus").textContent =
-            "ATSAM3X8E detected · BOSSA Program Port";
-          $("connect").textContent = "Disconnect";
-          $("connect").onclick = disconnect;
-          say(
-            "ATSAM3X8E verified. Select matching firmware and confirm to continue.",
-            "success",
-          );
-          log("BOSSA connection and chip identification successful.");
+            log(
+              "Printer restarted; bootloader selection will be requested when flashing starts.",
+            );
+            return;
+          }
+
+          await validateBootloaderPort(candidate);
         } catch (e) {
-          chipValidated = false;
-          say(`Could not validate BOSSA bootloader: ${e.message}`, "error");
-          log(`Connection check: ${e.message}`);
-          if (transport) await transport.close();
-          port = transport = programmer = null;
-          $("portstatus").textContent = "No validated device";
-          $("connect").textContent = "Connect to printer";
-          $("connect").onclick = connectHandler;
+          if (e.name === "NotFoundError") {
+            say("No printer was selected.");
+          } else {
+            chipValidated = false;
+            say(`Could not connect to printer: ${e.message}`, "error");
+            log(`Connection check: ${e.message}`);
+            if (transport) await transport.close();
+            port = transport = programmer = null;
+            $("portstatus").textContent = "No validated device";
+            $("connect").textContent = "Connect to printer";
+            $("connect").onclick = connectHandler;
+          }
         } finally {
           busy = false;
           update();
         }
       }
+      async function validateBootloaderPort(candidate) {
+        transport = new WebSerialTransport(candidate);
+        programmer = new BOSSAApi.BOSSA();
+        programmer.onProgress = (p) => {
+          $("bar").style.width =
+            `${Math.min(95, phaseBase + p * phaseScale)}%`;
+        };
+        programmer.onStatus = (msg) => {
+          if (!/^(SRAM readback mismatch|Page buffer mismatch)/.test(msg)) {
+            say(msg);
+          }
+          if (
+            !/^(Loading page|Checking page|Programming page|Verifying page)/.test(
+              msg,
+            )
+          )
+            log(msg);
+        };
+        say("Connecting to printer bootloader and checking chip…");
+        await programmer.connect(transport);
+        log("Port opened at 921600 baud.");
+        const chip = programmer.chip.chip_id >>> 0;
+        log(`Bootloader: ${programmer.version}`);
+        log(`Chip ID: 0x${chip.toString(16).toUpperCase()}`);
+        if (chip !== EXPECTED_CHIP)
+          throw new Error(
+            `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
+          );
+        chipValidated = true;
+        port = candidate;
+        $("portstatus").textContent =
+          "ATSAM3X8E detected · Bossa Program Port";
+        $("connect").hidden = false;
+        $("connect").textContent = "Disconnect";
+        $("connect").onclick = disconnect;
+        bootloaderSelectionRequired = false;
+        say(
+          "ATSAM3X8E verified. Select matching firmware and confirm to continue.",
+          "success",
+        );
+        log("BOSSA connection and chip identification successful.");
+      }
       $("connect").onclick = connectHandler;
       $("flash").addEventListener("click", async () => {
-        if (!file || !port || !programmer || !chipValidated || busy) return;
+        if (!file || busy) return;
+        if (
+          (!port || !programmer || !chipValidated) &&
+          !bootloaderSelectionRequired
+        )
+          return;
         busy = true;
         $("log").textContent = "";
         $("bar").style.width = "0";
         update();
         try {
+          if (!port || !programmer || !chipValidated) {
+            say("Select the printer bootloader port to continue.");
+            const candidate = await navigator.serial.requestPort({
+              filters: [BOOTLOADER_FILTER],
+            });
+            await validateBootloaderPort(candidate);
+          }
           const data = await file.arrayBuffer();
           if (data.byteLength === 0)
             throw new Error("The selected image is empty.");
@@ -756,19 +922,25 @@
           $("connect").onclick = connectHandler;
           say("Flash and verify completed. Printer restarted.", "success");
         } catch (e) {
-          say(`Flash failed: ${e.message}`, "error");
-          log(`ERROR: ${e.message}`);
-          if (transport) await transport.close();
-          port = transport = programmer = null;
-          chipValidated = false;
-          $("portstatus").textContent = "Disconnected after flash error";
-          $("connect").textContent = "Reconnect to printer";
-          $("connect").onclick = connectHandler;
+          if (e.name === "NotFoundError" && bootloaderSelectionRequired) {
+            say("No bootloader port selected. Press the flash button to try again.");
+            log("Bootloader selection canceled.");
+          } else {
+            say(`Flash failed: ${e.message}`, "error");
+            log(`ERROR: ${e.message}`);
+            if (transport) await transport.close();
+            port = transport = programmer = null;
+            chipValidated = false;
+            $("portstatus").textContent = "Disconnected after flash error";
+            $("connect").textContent = "Reconnect to printer";
+            $("connect").onclick = connectHandler;
+          }
         } finally {
           busy = false;
           update();
         }
       });
+      update();
     </script>
   </body>
 </html>

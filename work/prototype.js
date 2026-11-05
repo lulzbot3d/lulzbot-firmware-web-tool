@@ -8,7 +8,9 @@ let file = null,
   phaseBase = 0,
   phaseScale = 45;
 const EXPECTED_CHIP = 0x285e0a60,
-  MAX_FLASH_BYTES = 512 * 1024;
+  MAX_FLASH_BYTES = 512 * 1024,
+  MARLIN_FILTER = { usbVendorId: 0x27b1, usbProductId: 0x0001 },
+  BOOTLOADER_FILTER = { usbVendorId: 0x03eb, usbProductId: 0x6124 };
 const say = (msg, kind = "") => {
   $("state").textContent = msg;
   $("state").dataset.kind = kind;
@@ -43,17 +45,7 @@ class WebSerialTransport {
     this.writer = this.device.writable.getWriter();
   }
   _nextRead() {
-    if (!this.pendingRead)
-      this.pendingRead = this.reader.read().then(
-        (v) => {
-          this.pendingRead = null;
-          return v;
-        },
-        (e) => {
-          this.pendingRead = null;
-          throw e;
-        },
-      );
+    if (!this.pendingRead) this.pendingRead = this.reader.read();
     return this.pendingRead;
   }
   async read(length) {
@@ -61,9 +53,11 @@ class WebSerialTransport {
     for (let i = 0; i < length; ) {
       if (this.buffer.length === 0) {
         let timer;
+        let pendingRead;
         try {
+          pendingRead = this._nextRead();
           const { value, done } = await Promise.race([
-            this._nextRead(),
+            pendingRead,
             new Promise(
               (_, reject) =>
                 (timer = setTimeout(
@@ -73,13 +67,22 @@ class WebSerialTransport {
                         `Timed out waiting for BOSSA serial data (${i}/${length} bytes received)`,
                       ),
                     ),
-                  15000,
+                  5000, // Match Drunken Octopus's 5-second read timeout.
                 )),
             ),
           ]);
+          // Retain unread results after a timeout so late USB data is not lost.
+          this.pendingRead = null;
           if (done)
             throw new Error("Printer disconnected during BOSSA communication");
           this.buffer = value || new Uint8Array(0);
+        } catch (error) {
+          if (pendingRead) {
+            pendingRead.catch(() => {
+              if (this.pendingRead === pendingRead) this.pendingRead = null;
+            });
+          }
+          throw error;
         } finally {
           clearTimeout(timer);
         }
@@ -97,7 +100,8 @@ class WebSerialTransport {
     );
   }
   flush() {
-    return Promise.resolve();
+    // Match BOSSAC's 1 ms USB serial flush delay between SAM-BA transfers.
+    return this.wait(1);
   }
   wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -162,6 +166,7 @@ async function disconnect() {
   } finally {
     port = transport = programmer = null;
     chipValidated = false;
+    $("selectBootloader").hidden = true;
     $("portstatus").textContent = "No device connected";
     $("connect").textContent = "Connect to printer";
     $("connect").onclick = connectHandler;
@@ -175,50 +180,117 @@ async function connectHandler() {
   update();
   let candidate = null;
   try {
-    candidate = await navigator.serial.requestPort();
-    transport = new WebSerialTransport(candidate);
-    programmer = new BOSSAApi.BOSSA();
-    programmer.onProgress = (p) => {
-      $("bar").style.width = `${Math.min(95, phaseBase + p * phaseScale)}%`;
-    };
-    programmer.onStatus = (msg) => {
-      say(msg);
-      log(msg);
-    };
-    say("Connecting to BOSSA bootloader and checking chip…");
-    await programmer.connect(transport);
-    log("Port opened at 921600 baud.");
-    const chip = programmer.chip.chip_id >>> 0;
-    log(`Bootloader: ${programmer.version}`);
-    log(`Chip ID: 0x${chip.toString(16).toUpperCase()}`);
-    if (chip !== EXPECTED_CHIP)
-      throw new Error(
-        `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
+    candidate = await navigator.serial.requestPort({
+      filters: [MARLIN_FILTER, BOOTLOADER_FILTER],
+    });
+    const info = candidate.getInfo();
+    const isMarlin =
+      info.usbVendorId === MARLIN_FILTER.usbVendorId &&
+      info.usbProductId === MARLIN_FILTER.usbProductId;
+    if (isMarlin) {
+      say("Restarting printer into its bootloader…");
+      log("Marlin printer selected; requesting bootloader reset.");
+      const resetTransport = new WebSerialTransport(candidate);
+      try {
+        await resetTransport.open(1200);
+        await resetTransport.setDTR(true);
+        await resetTransport.wait(100);
+        await resetTransport.setDTR(false);
+      } finally {
+        await resetTransport.close();
+      }
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      $("connect").hidden = true;
+      $("selectBootloader").hidden = false;
+      $("portstatus").textContent = "Waiting for bootloader selection";
+      say(
+        "The printer restarted. Select its new bootloader port below. Windows may label it “Bossa Program Port”.",
       );
-    chipValidated = true;
-    port = candidate;
-    $("portstatus").textContent = "ATSAM3X8E detected · BOSSA Program Port";
-    $("connect").textContent = "Disconnect";
-    $("connect").onclick = disconnect;
-    say(
-      "ATSAM3X8E verified. Select matching firmware and confirm to continue.",
-      "success",
-    );
-    log("BOSSA connection and chip identification successful.");
+      log("Waiting for authorization of the printer bootloader port.");
+      return;
+    }
+    await validateBootloaderPort(candidate);
   } catch (e) {
     chipValidated = false;
-    say(`Could not validate BOSSA bootloader: ${e.message}`, "error");
-    log(`Connection check: ${e.message}`);
-    if (transport) await transport.close();
-    port = transport = programmer = null;
-    $("portstatus").textContent = "No validated device";
-    $("connect").textContent = "Connect to printer";
-    $("connect").onclick = connectHandler;
+    if (e.name === "NotFoundError") {
+      say("No printer was selected.");
+    } else {
+      say(`Could not connect to printer: ${e.message}`, "error");
+      log(`Connection check: ${e.message}`);
+      if (transport) await transport.close();
+      port = transport = programmer = null;
+      $("portstatus").textContent = "No validated device";
+      $("connect").textContent = "Connect to printer";
+      $("connect").onclick = connectHandler;
+    }
   } finally {
     busy = false;
     update();
   }
 }
+async function selectBootloaderHandler() {
+  busy = true;
+  update();
+  try {
+    const candidate = await navigator.serial.requestPort({
+      filters: [BOOTLOADER_FILTER],
+    });
+    $("selectBootloader").hidden = true;
+    $("connect").hidden = false;
+    await validateBootloaderPort(candidate);
+  } catch (e) {
+    if (e.name === "NotFoundError") {
+      say("Select the printer bootloader port to continue.");
+    } else {
+      chipValidated = false;
+      say(`Could not validate printer bootloader: ${e.message}`, "error");
+      log(`Connection check: ${e.message}`);
+      if (transport) await transport.close();
+      port = transport = programmer = null;
+    }
+  } finally {
+    busy = false;
+    update();
+  }
+}
+async function validateBootloaderPort(candidate) {
+  transport = new WebSerialTransport(candidate);
+  programmer = new BOSSAApi.BOSSA();
+  programmer.onProgress = (p) => {
+    $("bar").style.width = `${Math.min(95, phaseBase + p * phaseScale)}%`;
+  };
+  programmer.onStatus = (msg) => {
+    if (!/^(SRAM readback mismatch|Page buffer mismatch)/.test(msg)) {
+      say(msg);
+    }
+    if (!/^(Loading page|Checking page|Programming page|Verifying page)/.test(msg)) {
+      log(msg);
+    }
+  };
+  say("Connecting to printer bootloader and checking chip…");
+  await programmer.connect(transport);
+  log("Port opened at 921600 baud.");
+  const chip = programmer.chip.chip_id >>> 0;
+  log(`Bootloader: ${programmer.version}`);
+  log(`Chip ID: 0x${chip.toString(16).toUpperCase()}`);
+  if (chip !== EXPECTED_CHIP)
+    throw new Error(
+      `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
+    );
+  chipValidated = true;
+  port = candidate;
+  $("portstatus").textContent = "ATSAM3X8E detected · Bossa Program Port";
+  $("connect").hidden = false;
+  $("connect").textContent = "Disconnect";
+  $("connect").onclick = disconnect;
+  $("selectBootloader").hidden = true;
+  say(
+    "ATSAM3X8E verified. Select matching firmware and confirm to continue.",
+    "success",
+  );
+  log("Bootloader connection and chip identification successful.");
+}
+$("selectBootloader").onclick = selectBootloaderHandler;
 $("connect").onclick = connectHandler;
 $("flash").addEventListener("click", async () => {
   if (!file || !port || !programmer || !chipValidated || busy) return;

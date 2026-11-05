@@ -70,48 +70,33 @@
     }
 
     async read(addr, size) {
-      // SAM3 ROMs on USB may return only size-1 bytes for power-of-two
-      // reads larger than 32 bytes. BOSSA normally fetches the final byte
-      // with the `o` command, but this older v1.1 ROM does not answer `o`.
-      // For a 256-byte page, read 255 bytes with R, then fetch the final
-      // aligned word with `w` and take its last byte.
-      if (size === 256 && (addr & 3) === 0) {
-        const cmd = "R" + Samba.hex8(addr) + "," + Samba.hex8(255) + "#\n";
-        let first;
-        for (let attempt = 1; attempt <= 2; attempt++) {
-          await this.serial.write(cmd);
-          await this.serial.flush();
-          try {
-            first = await this.serial.read(255);
-            break;
-          } catch (error) {
-            const noBytes =
-              error &&
-              /Timed out waiting for BOSSA serial data \(0\/255 bytes received\)/.test(
-                error.message,
-              );
-            if (!noBytes || attempt === 2) throw error;
-            if (typeof this.serial.onRetry === "function") {
-              this.serial.onRetry(
-                "No bytes received for SRAM read; retrying once…",
-              );
-            }
-            // Keep the existing reader and its pending read intact.
-            // The SRAM contents have not changed, so either response
-            // to the repeated request contains the same page data.
-          }
-        }
-        const tailWord = await this.readWord(addr + 252);
-        const data = new Uint8Array(256);
-        data.set(first, 0);
-        data[255] = (tailWord >>> 24) & 0xff;
+      // Match BOSSAC's USB workaround for power-of-two reads larger than 32
+      // bytes: read the first byte completely before requesting the rest.
+      const splitRead = size > 32 && !(size & (size - 1));
+      if (splitRead) {
+        const firstByte = await this.readByte(addr);
+        const remainingSize = size - 1;
+        const cmd =
+          "R" + Samba.hex8(addr + 1) + "," + Samba.hex8(remainingSize) + "#\n";
+        await this.serial.write(cmd);
+        const remainingData = await this.serial.read(remainingSize);
+        const data = new Uint8Array(size);
+        data[0] = firstByte;
+        data.set(remainingData, 1);
         return data;
       }
 
       const cmd = "R" + Samba.hex8(addr) + "," + Samba.hex8(size) + "#\n";
       await this.serial.write(cmd);
-      await this.serial.flush();
       return this.serial.read(size);
+    }
+
+    async readByte(address) {
+      const cmd =
+        "o" + Samba.hex8(address) + ",4#\n";
+      await this.serial.write(cmd);
+      const bytes = await this.serial.read(1);
+      return bytes[0];
     }
 
     async go(addr) {
@@ -175,14 +160,6 @@
              */
         await this.sleepSeconds(0.5);  // was 0.1
       }
-    }
-
-    async readByte(address) {
-      const cmd = "o" + Samba.hex8(address) + ",1#\n";
-      await this.serial.write(cmd);
-      await this.serial.flush();
-      const bytes = await this.serial.read(1);
-      return bytes[0];
     }
 
     async readWord(address) {
@@ -710,10 +687,8 @@
           await this.writeFCR0(0x1, page);
         }
       }
-      // Do not let the next page-buffer upload/readback overlap the EEFC
-      // program operation started above. The following page's setup would
-      // otherwise perform its SRAM R command while flash is still busy.
-      await this.waitFSR();
+      // Leave the alternate SRAM buffer available while EEFC programs this
+      // page. The next page can be uploaded before writePage waits for FRDY.
     }
 
     async readPage(page) {
@@ -730,7 +705,7 @@
       await this.wordCopy.runv();
       // The flash-to-SRAM applet returns control before this ROM reliably
       // serves the following R request. Preserve the short settle delay.
-      await this.samba.sleepSeconds(0.02); // was 0.01
+      await this.samba.sleepSeconds(0.01);
 
       return this.samba.read(this.activePageBuffer, this.chip.size);
     }
@@ -759,7 +734,8 @@
         if (fsr0 & fsr1 & 0x1) {
           return;
         }
-        //await this.samba.sleepSeconds(0.001);
+        // Match BOSSA's 100-microsecond pause between flash-status polls.
+        await this.samba.sleepSeconds(0.001);  // was 0.01
       }
       throw Error("FlashTimeoutError");
     }
@@ -811,19 +787,6 @@
 
     readBuffer() {
       return this.samba.read(this.activePageBuffer, this.chip.size);
-    }
-
-    async readBufferWords() {
-      const data = new Uint8Array(this.chip.size);
-      for (let offset = 0; offset < this.chip.size; offset += 4) {
-        const word =
-          (await this.samba.readWord(this.activePageBuffer + offset)) >>> 0;
-        data[offset] = word & 0xff;
-        data[offset + 1] = (word >>> 8) & 0xff;
-        data[offset + 2] = (word >>> 16) & 0xff;
-        data[offset + 3] = (word >>> 24) & 0xff;
-      }
-      return data;
     }
 
     get activePageBuffer() {
@@ -990,64 +953,52 @@
         num_pages,
         "pages)",
       );
-      this.onStatus(`Writing firmware pages (0/${num_pages})…`);
+      this.onStatus(
+        `Writing firmware pages (0-${Math.min(127, num_pages - 1)} of ${num_pages})…`,
+      );
 
       // Using Legacy write
       for (let page = 0; page < num_pages; page++) {
         this.onProgress(page / num_pages);
         if (page % 128 === 0)
-          this.onStatus(`Writing firmware pages (${page}/${num_pages})…`);
-        this.onStatus(`Loading page ${page + 1}/${num_pages} into SRAM…`);
+          this.onStatus(
+            `Writing firmware pages (${page}-${Math.min(page + 127, num_pages - 1)} of ${num_pages})…`,
+          );
         const offset = page * page_size;
         const pageData = data.slice(offset, offset + page_size);
         await this.flash.loadBuffer(pageData);
         let bufferMatches = false;
         for (let retry = 1; retry <= maxRetries; retry++) {
-          this.onStatus(
-            `Checking page ${page + 1}/${num_pages} buffer (${retry}/${maxRetries})…`,
-          );
           const readBack = await this.flash.readBuffer();
           if (BOSSA.compareArray(pageData, readBack, pageData.length)) {
             bufferMatches = true;
             break;
           }
-          // The USB SAM-BA bulk read can be unreliable even when the
-          // SRAM upload is correct. Confirm a bulk-read mismatch with
-          // aligned 32-bit reads before retransmitting the page.
-          this.onStatus(
-            `Bulk SRAM read differed on page ${page + 1}; confirming with word reads…`,
-          );
-          const wordReadBack = await this.flash.readBufferWords();
-          if (BOSSA.compareArray(pageData, wordReadBack, pageData.length)) {
-            bufferMatches = true;
-            this.onStatus(
-              `Page ${page + 1} SRAM buffer confirmed; continuing…`,
-            );
-            break;
-          }
-          let bufferMismatchCount = 0;
-          let firstBufferMismatch = -1;
+
+          let mismatchCount = 0;
+          let firstMismatch = -1;
           for (let i = 0; i < pageData.length; i++) {
-            if (pageData[i] !== wordReadBack[i]) {
-              bufferMismatchCount++;
-              if (firstBufferMismatch < 0) firstBufferMismatch = i;
+            if (pageData[i] !== readBack[i]) {
+              mismatchCount++;
+              if (firstMismatch < 0) firstMismatch = i;
             }
           }
-          const expectedByte = pageData[firstBufferMismatch]
+          const expectedByte = pageData[firstMismatch]
             .toString(16)
             .padStart(2, "0")
             .toUpperCase();
-          const actualByte = wordReadBack[firstBufferMismatch]
+          const actualByte = (readBack[firstMismatch] ?? 0)
             .toString(16)
             .padStart(2, "0")
             .toUpperCase();
           this.onStatus(
-            `SRAM mismatch page ${page + 1}: ${bufferMismatchCount} bytes; first at +0x${firstBufferMismatch.toString(16).toUpperCase()} (expected 0x${expectedByte}, read 0x${actualByte})`,
+            `SRAM readback mismatch page ${page + 1}: ${mismatchCount} byte(s); first at +0x${firstMismatch.toString(16).toUpperCase()} (expected 0x${expectedByte}, read 0x${actualByte})`,
           );
           if (retry < maxRetries) {
             this.onStatus(
               `Page buffer mismatch; retrying page ${page + 1}/${num_pages}…`,
             );
+            await this.samba.readByte(0xdead);
             await this.flash.loadBuffer(pageData);
           }
         }
@@ -1056,7 +1007,6 @@
             `Page ${page + 1} could not be loaded reliably into the SRAM buffer after ${maxRetries} attempts; flash write stopped.`,
           );
         }
-        this.onStatus(`Programming page ${page + 1}/${num_pages}…`);
         await this.flash.writePage(page);
         if (page % 128 === 127 || page === num_pages - 1) {
           this.onStatus(`Wrote firmware pages (${page + 1}/${num_pages})…`);
@@ -1088,7 +1038,11 @@
       for (let page = 0; page < num_pages; page++) {
         this.onProgress(page / num_pages);
         if (page % 128 === 0 || page === num_pages - 1) {
-          this.onStatus(`Verifying firmware pages (${page}/${num_pages})…`);
+          const blockStart = Math.floor(page / 128) * 128;
+          const blockEnd = Math.min(blockStart + 127, num_pages - 1);
+          this.onStatus(
+            `Verifying firmware pages (${blockStart}-${blockEnd} of ${num_pages})…`,
+          );
         }
         const offset = page * page_size;
         const pageData = data.slice(offset, offset + page_size);
@@ -1116,7 +1070,10 @@
           );
         }
         if (page % 128 === 127 || page === num_pages - 1) {
-          this.onStatus(`Verified firmware pages (${page + 1}/${num_pages})…`);
+          const blockStart = Math.floor(page / 128) * 128;
+          this.onStatus(
+            `Verified firmware pages (${blockStart}-${page} of ${num_pages})…`,
+          );
         }
       }
       this.onProgress(1);
@@ -1130,11 +1087,9 @@
     async reset_and_close() {
       if (this.samba) {
         console.log("...CPU reset");
-        // Keep the boot-flag update and CPU reset in separate phases,
-        // matching the known-good bossac invocation's one-second pause.
-        this.onStatus("Waiting before printer reset…");
-        await this.samba.sleepSeconds(1);
         await this.samba.reset();
+        // Cura LE allows the reset to settle before closing the serial port.
+        await this.samba.sleepSeconds(0.1);
         this.samba = null;
       }
 
