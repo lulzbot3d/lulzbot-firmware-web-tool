@@ -5,3 +5,13 @@ Source: https://github.com/drunken-octopus/drunken-octopus-downloader
 Copyright (C) 2020 ShumaTech; Ultimaker B.V.; Aleph Objects, Inc.; SynDaver Labs, Inc.
 Licensed under GNU Lesser General Public License v3.0 or later (LGPL-3.0-or-later). See https://www.gnu.org/licenses/lgpl-3.0.html
 The original copyright and license notices are retained in bossa-bundle.js.
+
+AVR STK500v2 flasher
+
+The AVR programming flow in avr-stk500v2.js is derived from the AVR ISP
+implementation distributed by drunken-octopus/drunken-octopus-downloader,
+which in turn derives from Cura LE. Source:
+https://github.com/drunken-octopus/drunken-octopus-downloader
+Copyright (C) 2020 Ultimaker B.V.; Aleph Objects, Inc.; SynDaver Labs, Inc.
+Licensed under GNU Lesser General Public License v3.0 or later (LGPL-3.0-or-later).
+The original copyright and license notices are retained in avr-stk500v2.js.

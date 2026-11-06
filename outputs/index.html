@@ -95,7 +95,7 @@
       .wrap {
         max-width: 1060px;
         margin: 0 auto;
-        padding: 38px 24px 72px;
+        padding: 24px 24px 72px;
       }
       .eyebrow {
         text-transform: uppercase;
@@ -107,14 +107,13 @@
       h1 {
         font-size: 34px;
         letter-spacing: -1.2px;
-        margin: 9px 0 8px;
+        margin: 0 0 8px;
       }
       .intro {
         color: var(--muted);
         font-size: 15px;
         line-height: 1.6;
         margin: 0 0 26px;
-        max-width: 650px;
       }
       .warning {
         border: 1px solid #e9d9b7;
@@ -132,6 +131,12 @@
         display: block;
         color: #44351e;
         margin-bottom: 2px;
+      }
+      .warning .settings-warning {
+        display: block;
+        color: #a23c36;
+        font-weight: 650;
+        margin-top: 8px;
       }
       .warn-icon {
         font-size: 18px;
@@ -268,6 +273,11 @@
         opacity: 0.45;
         cursor: not-allowed;
       }
+      .btn.disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
       .portline {
         display: flex;
         gap: 9px;
@@ -337,6 +347,40 @@
         max-height: 105px;
         overflow: auto;
         white-space: pre-wrap;
+      }
+      .log-details {
+        margin-top: 8px;
+      }
+      .log-details summary {
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+        list-style: none;
+      }
+      .log-details summary::-webkit-details-marker {
+        display: none;
+      }
+      .log-details summary:focus-visible {
+        outline: 2px solid var(--brand-green-dark);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      .details-arrow {
+        display: inline-block;
+        font-size: 16px;
+        line-height: 1;
+        transition: transform 150ms ease;
+      }
+      .log-details[open] .details-arrow {
+        transform: rotate(180deg);
+      }
+      .log-details .log {
+        margin-top: 7px;
       }
       .sidecard {
         margin-bottom: 18px;
@@ -430,30 +474,35 @@
         />
       </svg>
       <div class="brand">
-        Firmware Utility<small>Browser based flashing prototype</small>
+        Firmware Utility<small>Browser Based Firmware Flashing</small>
       </div>
     </header>
     <main class="wrap">
-      <div class="eyebrow">Firmware tools · Preview</div>
-      <h1>Flash a firmware file</h1>
+      <h1>Update Your LulzBot Firmware</h1>
       <p class="intro">
-        Choose a local firmware image, connect to a compatible Atmel SAM board
+        Firmware controls your 3D printer's mechanical functions.  Update it to gain new features and boost performance.
+        Choose a local firmware image, connect to a supported LulzBot printer
         over USB, and write it directly from your browser.
       </p>
       <div class="warning">
         <span class="warn-icon">⚠</span>
         <div>
-          <strong>Confirm your board and firmware before continuing</strong>This
-          operation erases existing firmware. This prototype only supports
-          SAM-BA/BOSSA compatible boards and raw <code>.bin</code> images. Most
-          classic LulzBot Mini and TAZ printers use AVR/RAMBo boards and require
-          a different flasher. The browser flash sequence has not yet been
-          tested on a physical TAZ Pro.
+          <strong>Confirm your printer model, tool head, and options before continuing.</strong>
+          This operation erases existing firmware. Use a firmware image for the
+          exact printer and configuration. This page supports
+          <code>.bin</code> firmware files for the LulzBot TAZ Pro and TAZ 8,
+          and <code>.hex</code> firmware files for the LulzBot Mini 1, Mini 2, SideKick,
+          Workhorse, and Workhorse 2.
+          <span class="settings-warning">
+            Warning: Updating may reset certain machine settings. Please note
+            down any settings you might want later, such as Z-offset, backlash
+            compensation, and nozzle offsets for dual extruders.
+          </span>
         </div>
       </div>
       <div class="layout">
         <section class="card">
-          <h2>Manual flash</h2>
+          <h2>Manual Flash</h2>
           <p class="sub">
             Choose a firmware image, connect the printer, then write and
             verify.
@@ -466,7 +515,7 @@
                 <div class="filemark">▧</div>
                 <div class="filemeta">
                   <b id="filename">No file selected</b
-                  ><span id="filesize">Select a .bin firmware image</span>
+                  ><span id="filesize">Select a .bin or .hex firmware image</span>
                 </div>
                 <label
                   class="btn"
@@ -476,7 +525,7 @@
                 ><input
                   id="firmware"
                   type="file"
-                  accept=".bin,application/octet-stream"
+                  accept=".bin,.hex,application/octet-stream,text/plain"
                 />
               </div>
               <div class="help">
@@ -498,11 +547,13 @@
               <div class="help">
                 Use Chromium on HTTPS or localhost. If the printer is running
                 Marlin, this page can restart it into its bootloader. If that
-                changes the port, you will select the printer again when you
-                start flashing in step 3. Windows may label it “Bossa Program
-                Port”. If Marlin is not running, hold ERASE
+                is a <code>.bin</code> image, select its new BOSSA port in step
+                3 after the reset. For a <code>.hex</code> image, the page
+                enters AVR programming mode on the selected Marlin port.
+                Windows may label the BOSSA port “Bossa Program Port”. If
+                Marlin is not running, hold ERASE
                 while powering on, then connect directly to the bootloader.
-                This page verifies the ATSAM3X8E before enabling flash.
+                This page checks the controller before enabling flash.
               </div>
             </div>
           </div>
@@ -524,38 +575,61 @@
                 >
               </div>
               <div class="progress"><div class="bar" id="bar"></div></div>
-              <div class="log" id="log" aria-live="polite"></div>
+              <details class="log-details">
+                <summary>
+                  <span>Details</span>
+                  <span class="details-arrow" aria-hidden="true">▾</span>
+                </summary>
+                <div class="log" id="log" aria-live="polite"></div>
+              </details>
             </div>
           </div>
         </section>
         <aside>
           <section class="card sidecard">
-            <span class="pill">TARGET BOARD</span>
-            <h2>TAZ Pro · Archim2</h2>
-            <p class="compat">
-              ATSAM3X8E with BOSSA/SAM-BA bootloader. Expected flash: 512 KB at
-              0x80000, 2,048 pages × 256 bytes. Flash is enabled only after the
-              ROM reports the SAM3X8E chip ID.
-            </p>
-            <div class="divider"></div>
-            <p class="compat">
-              <b>Still unsupported:</b> AVR/RAMBo firmware, Intel HEX files,
-              UF2, and other controller families.
-            </p>
-          </section>
-          <section class="card">
-            <h2>Before you flash</h2>
+            <h2>Before You Flash</h2>
             <p class="compat">
               Use a known-good firmware image for the exact board and
               configuration. Keep the printer powered and connected directly by
-              USB. Do not disconnect during erase, write, or verify. The image
-              is read locally and is not uploaded to the web server.
+              USB. Do not disconnect during erase, write, or verify.
             </p>
             <div class="divider"></div>
             <p class="compat">
-              This prototype checks for an ATSAM3X8E board, but it cannot
+              This prototype checks the controller chip, but it does not
               determine whether the firmware matches your printer model,
               toolhead, or options.
+            </p>
+          </section>
+          <section class="card">
+            <h2>After You Flash</h2>
+            <p class="compat">
+              Re-enter the calibration values you noted before flashing,
+              through the printer's settings or configuration menu, or
+              recalibrate the printer using its calibration menu.
+            </p>
+            <p class="compat">
+              See the
+              <a
+                class="link"
+                href="https://ohai.lulzbot.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >OHAI</a
+              >
+              for calibration instructions.
+            </p>
+            <div class="divider"></div>
+            <p class="compat">
+              If your
+              firmware offers tool head selection, choose the tool head
+              installed on your printer from the printer’s
+              <a
+                class="link"
+                href="https://ohai.lulzbot.com/project/flashing-firmware-through-cura-3620/firmware-flashing/#step_4"
+                target="_blank"
+                rel="noopener noreferrer"
+                >tool head menu</a
+              >.
             </p>
           </section>
         </aside>
@@ -565,12 +639,15 @@
       </div>
     </main>
     <script src="bossa-bundle.js"></script>
+    <script src="avr-stk500v2.js"></script>
     <script>
       const $ = (id) => document.getElementById(id);
       let file = null,
         port = null,
         transport = null,
         programmer = null,
+        firmwareType = null,
+        programmerKind = null,
         busy = false,
         chipValidated = false,
         bootloaderSelectionRequired = false,
@@ -578,6 +655,7 @@
         phaseScale = 45;
       const EXPECTED_CHIP = 0x285e0a60,
         MAX_FLASH_BYTES = 512 * 1024,
+        MAX_HEX_FILE_BYTES = 2 * 1024 * 1024,
         MARLIN_FILTER = { usbVendorId: 0x27b1, usbProductId: 0x0001 },
         BOOTLOADER_FILTER = { usbVendorId: 0x03eb, usbProductId: 0x6124 };
       const say = (msg, kind = "") => {
@@ -601,7 +679,25 @@
         const canSelectBootloader = Boolean(
           file && bootloaderSelectionRequired && $("ack").checked && !busy
         );
-        $("flash").disabled = !(canFlash || canSelectBootloader);
+        const canStartAvrFlash = Boolean(
+          file &&
+            firmwareType === "hex" &&
+            port &&
+            programmerKind === "hex-selected" &&
+            $("ack").checked &&
+            !busy,
+        );
+        $("flash").disabled = !(
+          canFlash || canSelectBootloader || canStartAvrFlash
+        );
+        $("firmware").disabled = busy;
+        $("chooseFile").classList.toggle("disabled", busy);
+        $("connect").disabled = Boolean(
+          !navigator.serial ||
+            busy ||
+            (!file && !port) ||
+            (bootloaderSelectionRequired && !port),
+        );
         $("chooseFile").classList.toggle("next-action", !file && !busy);
         $("firmware")
           .closest(".filebox")
@@ -612,7 +708,9 @@
         );
         $("flash").classList.toggle(
           "next-action",
-          Boolean((canFlash || canSelectBootloader) && !busy),
+          Boolean(
+            (canFlash || canSelectBootloader || canStartAvrFlash) && !busy,
+          ),
         );
       }
       class WebSerialTransport {
@@ -652,7 +750,7 @@
                         () =>
                           reject(
                             new Error(
-                              `Timed out waiting for BOSSA serial data (${i}/${length} bytes received)`,
+                              `Timed out waiting for printer serial data (${i}/${length} bytes received)`,
                             ),
                           ),
                         5000, // Match Drunken Octopus's 5-second read timeout.
@@ -698,6 +796,9 @@
           // driver combines them into one packet.
           return this.wait(1);
         }
+        discardBuffers() {
+          this.buffer = new Uint8Array(0);
+        }
         wait(ms) {
           return new Promise((resolve) => setTimeout(resolve, ms));
         }
@@ -724,25 +825,53 @@
           this.reader = this.writer = null;
         }
       }
-      $("firmware").addEventListener("change", (e) => {
-        file = e.target.files[0] || null;
+      $("firmware").addEventListener("change", async (e) => {
+        const nextFile = e.target.files[0] || null;
+        const extension = nextFile?.name.split(".").pop().toLowerCase();
+        const nextType =
+          extension === "bin" || extension === "hex" ? extension : null;
+
+        if (nextType !== firmwareType) {
+          if (transport) await transport.close();
+          port = transport = programmer = null;
+          chipValidated = false;
+          programmerKind = null;
+          bootloaderSelectionRequired = false;
+          $("portstatus").textContent = "No device connected";
+          $("connect").textContent = "Connect to printer";
+          $("connect").onclick = connectHandler;
+        }
+
+        file = nextFile;
+        firmwareType = nextType;
         $("filename").textContent = file ? file.name : "No file selected";
         $("filesize").textContent = file
           ? `${(file.size / 1024).toFixed(1)} KB · ${file.size.toLocaleString()} bytes`
-          : "Select a .bin firmware image";
-        if (file && !file.name.toLowerCase().endsWith(".bin")) {
-          file = null;
-          say("Choose a raw .bin image.", "error");
-        } else if (file && file.size > MAX_FLASH_BYTES) {
+          : "Select a .bin or .hex firmware image";
+        if (file && !firmwareType) {
           file = null;
           $("firmware").value = "";
           $("filename").textContent = "No file selected";
-          $("filesize").textContent = "Maximum ATSAM3X8E image size is 512 KB";
-          say("This image is too large for ATSAM3X8E flash.", "error");
+          $("filesize").textContent = "Choose a raw .bin or Intel HEX .hex image";
+          say("Choose a raw .bin or Intel HEX .hex image.", "error");
+        } else if (file && firmwareType === "bin" && file.size > MAX_FLASH_BYTES) {
+          file = null;
+          firmwareType = null;
+          $("firmware").value = "";
+          $("filename").textContent = "No file selected";
+          $("filesize").textContent = "Maximum .bin image size is 512 KB";
+          say("This image is too large for the supported SAM flash.", "error");
+        } else if (file && firmwareType === "hex" && file.size > MAX_HEX_FILE_BYTES) {
+          file = null;
+          firmwareType = null;
+          $("firmware").value = "";
+          $("filename").textContent = "No file selected";
+          $("filesize").textContent = "Maximum Intel HEX file size is 2 MB";
+          say("This Intel HEX file is too large to process.", "error");
         } else
           say(
             file
-              ? "Image ready. Confirm the board before flashing."
+              ? `${firmwareType.toUpperCase()} image ready. Connect the matching printer.`
               : "Select a file and connect a board to continue.",
           );
         update();
@@ -761,6 +890,7 @@
         } finally {
           port = transport = programmer = null;
           chipValidated = false;
+          programmerKind = null;
           bootloaderSelectionRequired = false;
           $("portstatus").textContent = "No device connected";
           $("connect").textContent = "Connect to printer";
@@ -776,8 +906,26 @@
         let candidate = null;
         try {
           candidate = await navigator.serial.requestPort({
-            filters: [MARLIN_FILTER, BOOTLOADER_FILTER],
+            filters:
+              firmwareType === "hex"
+                ? [MARLIN_FILTER]
+                : [MARLIN_FILTER, BOOTLOADER_FILTER],
           });
+          if (firmwareType === "hex") {
+            port = candidate;
+            programmerKind = "hex-selected";
+            chipValidated = false;
+            $("portstatus").textContent = "AVR printer selected";
+            $("connect").textContent = "Disconnect";
+            $("connect").onclick = disconnect;
+            say(
+              "Printer selected. Its AVR signature will be checked before flashing.",
+              "success",
+            );
+            log("AVR printer port selected; programming starts from step 3.");
+            return;
+          }
+
           const info = candidate.getInfo();
           const isMarlin =
             info.usbVendorId === MARLIN_FILTER.usbVendorId &&
@@ -820,6 +968,7 @@
             log(`Connection check: ${e.message}`);
             if (transport) await transport.close();
             port = transport = programmer = null;
+            programmerKind = null;
             $("portstatus").textContent = "No validated device";
             $("connect").textContent = "Connect to printer";
             $("connect").onclick = connectHandler;
@@ -858,6 +1007,7 @@
             `Expected ATSAM3X8E (0x285E0A60), found 0x${chip.toString(16).toUpperCase()}`,
           );
         chipValidated = true;
+        programmerKind = "bin";
         port = candidate;
         $("portstatus").textContent =
           "ATSAM3X8E detected · Bossa Program Port";
@@ -871,12 +1021,46 @@
         );
         log("BOSSA connection and chip identification successful.");
       }
+      async function validateAvrPort(candidate) {
+        transport = new WebSerialTransport(candidate);
+        programmer = new AVRFlasher.Stk500v2();
+        programmer.onProgress = (progress) => {
+          $("bar").style.width =
+            `${Math.min(95, phaseBase + progress * phaseScale)}%`;
+        };
+        programmer.onStatus = (message) => {
+          say(message);
+          log(message);
+        };
+        say("Connecting to AVR printer bootloader and checking chip…");
+        const chip = await programmer.connect(transport);
+        port = candidate;
+        chipValidated = true;
+        programmerKind = "hex";
+        bootloaderSelectionRequired = false;
+        $("portstatus").textContent = `${chip.name} detected · AVR serial port`;
+        $("connect").textContent = "Disconnect";
+        $("connect").onclick = disconnect;
+        say(
+          `${chip.name} verified. Confirm the firmware configuration before flashing.`,
+          "success",
+        );
+        const signature = chip.signature
+          .map((value) => value.toString(16).toUpperCase().padStart(2, "0"))
+          .join(":");
+        log(`AVR signature verified: ${signature}.`);
+      }
       $("connect").onclick = connectHandler;
       $("flash").addEventListener("click", async () => {
         if (!file || busy) return;
         if (
           (!port || !programmer || !chipValidated) &&
-          !bootloaderSelectionRequired
+          !bootloaderSelectionRequired &&
+          !(
+            firmwareType === "hex" &&
+            port &&
+            programmerKind === "hex-selected"
+          )
         )
           return;
         busy = true;
@@ -884,21 +1068,38 @@
         $("bar").style.width = "0";
         update();
         try {
-          if (!port || !programmer || !chipValidated) {
+          if (bootloaderSelectionRequired) {
             say("Select the printer bootloader port to continue.");
             const candidate = await navigator.serial.requestPort({
               filters: [BOOTLOADER_FILTER],
             });
             await validateBootloaderPort(candidate);
           }
-          const data = await file.arrayBuffer();
+          if (firmwareType === "hex" && programmerKind === "hex-selected") {
+            await validateAvrPort(port);
+          }
+          if (!port || !programmer || !chipValidated) {
+            throw new Error("Connect to a supported printer before flashing.");
+          }
+          if (programmerKind !== firmwareType) {
+            throw new Error(
+              "Selected firmware format does not match the connected printer bootloader.",
+            );
+          }
+          const fileData = await file.arrayBuffer();
+          const data =
+            firmwareType === "hex"
+              ? AVRFlasher.decodeIntelHex(fileData)
+              : fileData;
           if (data.byteLength === 0)
             throw new Error("The selected image is empty.");
-          if (data.byteLength > MAX_FLASH_BYTES)
+          if (firmwareType === "bin" && data.byteLength > MAX_FLASH_BYTES)
             throw new Error(
               "Image exceeds the ATSAM3X8E 512 KB flash capacity.",
             );
-          log(`Image size: ${data.byteLength.toLocaleString()} bytes`);
+          log(
+            `${firmwareType.toUpperCase()} image data: ${data.byteLength.toLocaleString()} bytes`,
+          );
           phaseBase = 0;
           phaseScale = 45;
           say("Erasing and writing firmware…");
@@ -911,12 +1112,17 @@
           await programmer.verify_firmware(data);
           log("Verify successful.");
           $("bar").style.width = "96%";
-          say("Setting boot-from-flash and restarting…");
+          say(
+            firmwareType === "bin"
+              ? "Setting boot-from-flash and restarting…"
+              : "Closing AVR programmer connection…",
+          );
           await programmer.enable_boot_flag();
           await programmer.reset_and_close();
           $("bar").style.width = "100%";
           port = transport = programmer = null;
           chipValidated = false;
+          programmerKind = null;
           $("portstatus").textContent = "Printer restarted";
           $("connect").textContent = "Connect to printer";
           $("connect").onclick = connectHandler;
@@ -931,6 +1137,7 @@
             if (transport) await transport.close();
             port = transport = programmer = null;
             chipValidated = false;
+            programmerKind = null;
             $("portstatus").textContent = "Disconnected after flash error";
             $("connect").textContent = "Reconnect to printer";
             $("connect").onclick = connectHandler;

@@ -953,16 +953,12 @@
         num_pages,
         "pages)",
       );
-      this.onStatus(
-        `Writing firmware pages (0-${Math.min(127, num_pages - 1)} of ${num_pages})…`,
-      );
-
       // Using Legacy write
       for (let page = 0; page < num_pages; page++) {
         this.onProgress(page / num_pages);
         if (page % 128 === 0)
           this.onStatus(
-            `Writing firmware pages (${page}-${Math.min(page + 127, num_pages - 1)} of ${num_pages})…`,
+            `Writing firmware pages (${page + 1}-${Math.min(page + 128, num_pages)} of ${num_pages})…`,
           );
         const offset = page * page_size;
         const pageData = data.slice(offset, offset + page_size);
@@ -1037,11 +1033,11 @@
       );
       for (let page = 0; page < num_pages; page++) {
         this.onProgress(page / num_pages);
-        if (page % 128 === 0 || page === num_pages - 1) {
+        if (page % 128 === 0) {
           const blockStart = Math.floor(page / 128) * 128;
           const blockEnd = Math.min(blockStart + 127, num_pages - 1);
           this.onStatus(
-            `Verifying firmware pages (${blockStart}-${blockEnd} of ${num_pages})…`,
+            `Verifying firmware pages (${blockStart + 1}-${blockEnd + 1} of ${num_pages})…`,
           );
         }
         const offset = page * page_size;
@@ -1072,7 +1068,7 @@
         if (page % 128 === 127 || page === num_pages - 1) {
           const blockStart = Math.floor(page / 128) * 128;
           this.onStatus(
-            `Verified firmware pages (${blockStart}-${page} of ${num_pages})…`,
+            `Verified firmware pages (${blockStart + 1}-${page + 1} of ${num_pages})…`,
           );
         }
       }
