@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#c1d82f">
+    <link rel="icon" type="image/png" sizes="32x32"
+      href="https://www.lulzbot.com/next-public/favicon-32x32.png?v=2">
+    <title>Find Your LulzBot Firmware</title>
+    <style>
+      :root {
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: #202521;
+        background: #f5f5f1;
+        --green: #c1d82f;
+        --green-dark: #788814;
+        --muted: #68716b;
+        --line: #dce1db;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-height: 100vh; }
+      header {
+        min-height: 72px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px max(24px, calc((100vw - 1280px) / 2));
+        border-bottom: 1px solid var(--line);
+        background: #fbfbf8;
+      }
+      .logo { display: block; width: 148px; height: auto; flex: none; fill: #171a08; }
+      .brand { font-size: 14px; font-weight: 700; }
+      .brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 500; }
+      main { width: min(100% - 48px, 1280px); margin: 0 auto; padding: 40px 0 70px; }
+      .selector-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(350px, .75fr); align-items: start; gap: 20px; }
+      .selector-grid:has(#result[hidden]) { grid-template-columns: minmax(0, 880px); }
+      h1 { margin: 0; font-size: clamp(28px, 4vw, 36px); letter-spacing: -0.04em; }
+      .intro { margin: 10px 0 24px; color: var(--muted); line-height: 1.55; }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 15px;
+        background: #fff;
+        box-shadow: 0 8px 24px rgb(25 35 20 / 4%);
+      }
+      .selection { padding: 22px; }
+      .step[hidden] { display: none; }
+      .step { display: grid; grid-template-columns: 34px 1fr; gap: 13px; padding: 0 0 22px; }
+      .step + .step { padding-top: 20px; border-top: 1px solid #edf0eb; }
+      .step:last-child { padding-bottom: 0; }
+      .number {
+        width: 32px; height: 32px; display: grid; place-items: center;
+        border-radius: 50%; background: #eef0e8; color: #626a60; font-size: 14px; font-weight: 750;
+      }
+      .step.active .number, .step.complete .number { background: var(--green); color: #202521; }
+      .step-content { min-width: 0; }
+      h2 { margin: 3px 0 10px; font-size: 16px; }
+      .help { margin: -4px 0 11px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+      select {
+        width: 100%; min-height: 46px; padding: 0 13px;
+        border: 1px solid #cdd4cc; border-radius: 8px; background: #fff; color: inherit; font: inherit;
+      }
+      select:disabled { background: #f5f6f3; color: #818981; }
+      .option-list { display: grid; gap: 10px; }
+      .option-question { min-width: 0; margin: 0; padding: 0; border: 0; }
+      .option-question legend { margin-bottom: 8px; font-size: 14px; font-weight: 650; }
+      .option-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+      .option-choice {
+        min-height: 38px; display: inline-flex; align-items: center; gap: 8px;
+        padding: 7px 12px; border: 1px solid #cdd4cc; border-radius: 8px;
+        background: #fff; font-size: 13px; cursor: pointer;
+      }
+      .option-choice:has(input:checked) { border-color: var(--green-dark); background: #f3f6df; }
+      .option-choice input { width: 16px; height: 16px; margin: 0; accent-color: var(--green-dark); }
+      .result { margin-top: 0; padding: 20px 22px; position: sticky; top: 18px; }
+      .result[hidden], #selector[hidden] { display: none; }
+      .kicker { margin: 0 0 5px; color: var(--green-dark); font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+      .result h2 { margin: 0 0 14px; font-size: 20px; }
+      dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 13px; }
+      dt { color: var(--muted); }
+      dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+      .notice { margin: 16px 0 0; padding: 11px 12px; border-radius: 8px; background: #f1f3ee; color: #515a53; font-size: 12px; line-height: 1.5; }
+      .warning { background: #fff1ee; color: #8b3328; }
+      .error { margin: 14px 0 0; color: #8b3328; font-size: 13px; }
+      .loading { padding: 18px 0; color: var(--muted); font-size: 14px; }
+      @media (max-width: 900px) {
+        .selector-grid, .selector-grid:has(#result[hidden]) { grid-template-columns: 1fr; }
+        .result { position: static; }
+      }
+      @media (max-width: 560px) {
+        header { min-height: 64px; padding: 12px 18px; }
+        main { width: min(100% - 32px, 1280px); padding-top: 30px; }
+        .selection, .result { padding: 17px; }
+        dl { grid-template-columns: 1fr; gap: 3px; }
+        dd + dt { margin-top: 7px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <svg
+        class="logo"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1920 267.04"
+        role="img"
+        aria-label="LulzBot"
+      >
+        <path
+          d="M168.58,202.15c1.98,0,3.6,.71,4.86,2.12,1.24,1.41,1.84,3.12,1.84,5.15v50.34c0,2.06-.6,3.77-1.84,5.18-1.26,1.41-2.88,2.12-4.86,2.12H7.12C2.34,267.04,0,264.59,0,259.75V7.26C0,2.45,2.34,0,7.12,0H58.7c4.71,0,7.09,2.45,7.09,7.26V195.31c0,2.02,.68,3.65,2.07,4.93,1.35,1.29,3.04,1.9,5.04,1.9h95.69"
+        />
+        <path
+          d="M466.63,2.12c1.35,1.4,2.04,3.09,2.04,5.15V216.67h-.35c0,2.02-.25,4.2-.75,6.49-.51,2.27-1.11,4.16-1.86,5.73l-34.38,35.08c-1.74,.98-3.94,1.78-6.54,2.27-2.61,.53-4.93,.8-6.94,.8h-118.47c-2.01,0-4.23-.27-6.73-.8-2.49-.49-4.62-1.29-6.36-2.27l-34.38-35.08c-.99-1.81-1.77-3.95-2.25-6.53-.51-2.52-.75-4.82-.75-6.86V7.26c0-2.05,.69-3.74,2.07-5.15,1.35-1.41,3.04-2.12,5.05-2.12h51.57c1.98,0,3.67,.71,5.05,2.12,1.38,1.4,2.07,3.09,2.07,5.15V195.31c0,2.02,.66,3.77,2.04,5.12,1.35,1.4,3.06,2.11,5.04,2.11h74.01c1.98,0,3.64-.71,4.87-2.11,1.23-1.35,1.86-3.1,1.86-5.12V7.26c0-2.05,.69-3.74,2.04-5.15,1.38-1.41,3.06-2.12,5.07-2.12h51.94c1.98,0,3.69,.71,5.04,2.12"
+        />
+        <path
+          d="M733.68,202.15c1.98,0,3.6,.71,4.87,2.12,1.26,1.41,1.86,3.12,1.86,5.15v50.34c0,2.06-.6,3.77-1.86,5.18-1.26,1.41-2.88,2.12-4.87,2.12h-161.46c-4.74,0-7.09-2.45-7.09-7.29V7.26c0-4.81,2.34-7.26,7.09-7.26h51.58c4.74,0,7.12,2.45,7.12,7.26V195.31c0,2.02,.66,3.65,2.04,4.93,1.38,1.29,3.04,1.9,5.05,1.9h95.68"
+        />
+        <path
+          d="M1013.67,55.33c0,2.02-.51,4.2-1.54,6.49-.98,2.27-2.13,4.16-3.33,5.69l-121.5,139.62h119.25c1.98,0,3.66,.67,5.01,2.09,1.38,1.4,2.11,3.12,2.11,5.15v45.37c0,2.06-.72,3.77-2.11,5.18-1.35,1.41-3.03,2.12-5.01,2.12h-185.78c-4.71,0-7.12-2.45-7.12-7.29v-47.67c0-2.02,.45-4.26,1.32-6.65,.87-2.42,1.92-4.41,3.18-5.91l124.09-139.62h-119.22c-2.01,0-3.7-.71-5.04-2.12-1.38-1.38-2.08-3.09-2.08-5.11V7.26c0-2.05,.69-3.74,2.08-5.15,1.35-1.41,3.03-2.12,5.04-2.12h183.53c1.98,0,3.66,.71,5.01,2.12,1.38,1.4,2.11,3.09,2.11,5.15V55.33"
+        />
+        <path
+          d="M1169.87,208.67h100.54v-51.9h-100.54v51.9Zm0-103h100.54V58h-100.54v47.67Zm157.34-67.53c.75,1.78,1.44,4.02,2.04,6.68,.63,2.67,.96,5.02,.96,7.04v42.35c0,2.05-.45,4.29-1.32,6.67-.87,2.45-1.92,4.42-3.18,5.91l-16.06,20.99c-1.26,1.53-1.83,3.44-1.68,5.73,.12,2.3,.78,4.05,2.07,5.33l15.31,19.09c1.23,1.5,2.37,3.49,3.37,5.91,.99,2.38,1.5,4.63,1.5,6.67v44.98c0,2.05-.33,4.35-.96,6.86-.6,2.57-1.29,4.71-2.04,6.53l-34.37,35.08c-1.78,.98-3.94,1.78-6.55,2.27-2.64,.53-4.92,.8-6.9,.8h-161.85c-4.74,0-7.12-2.45-7.12-7.29V7.26c0-2.05,.69-3.74,2.08-5.15,1.38-1.41,3.04-2.12,5.04-2.12h161.85c1.98,0,4.27,.34,6.9,.95,2.61,.64,4.77,1.35,6.55,2.12l34.37,35.08"
+        />
+        <path
+          d="M1490.53,202.55h87.85V64.89h-87.85V202.55Zm151.05-164.4c.75,1.78,1.41,3.95,2.04,6.49,.63,2.55,.96,4.85,.96,6.86V215.51c0,2.05-.33,4.35-.96,6.86-.63,2.57-1.29,4.71-2.04,6.53l-34.41,35.08c-1.74,.98-3.93,1.78-6.54,2.27-2.58,.53-4.93,.8-6.91,.8h-118.5c-1.98,0-4.23-.27-6.72-.8-2.49-.49-4.59-1.29-6.33-2.27l-34.4-35.08c-.96-1.81-1.74-3.95-2.23-6.53-.51-2.52-.75-4.82-.75-6.86V51.5c0-2.02,.24-4.31,.75-6.86,.48-2.54,1.27-4.71,2.23-6.49l34.4-35.08c1.74-.77,3.84-1.47,6.33-2.12,2.5-.61,4.74-.95,6.72-.95h118.5c1.98,0,4.33,.34,6.91,.95,2.61,.64,4.8,1.35,6.54,2.12l34.41,35.08"
+        />
+        <path
+          d="M1920,57.63c0,2.02-.68,3.7-2.04,5.11-1.41,1.41-3.07,2.14-5.04,2.14h-53.08c-1.98,0-3.66,.62-5.07,1.87-1.35,1.25-2.04,2.94-2.04,4.96v188.02c0,2.06-.64,3.77-1.87,5.18-1.26,1.41-2.88,2.12-4.87,2.12h-51.93c-2.04,0-3.7-.71-5.07-2.12-1.35-1.4-2.04-3.12-2.04-5.18V71.73c0-2.02-.63-3.71-1.86-4.96-1.23-1.25-2.88-1.87-4.83-1.87h-53.11c-1.98,0-3.67-.73-5.05-2.14-1.34-1.41-2.04-3.1-2.04-5.11V7.26c0-4.81,2.34-7.26,7.09-7.26h185.78c1.98,0,3.63,.71,5.04,2.12,1.35,1.4,2.04,3.09,2.04,5.15V57.63"
+        />
+      </svg>
+      <div class="brand">Firmware Finder<small>Browser Based Firmware Selection</small></div>
+    </header>
+
+    <main>
+      <h1>Find Your LulzBot Firmware</h1>
+      <p class="intro">Choose your printer and installed tool head to find the matching firmware listed in the configuration catalog.</p>
+
+      <div id="loading" class="loading" role="status">Loading printer configurations…</div>
+      <p id="load-error" class="error" hidden></p>
+
+      <div class="selector-grid">
+      <section id="selector" class="card selection" hidden aria-label="Firmware configuration">
+        <div class="step active" id="printer-step">
+          <span class="number" aria-hidden="true">1</span>
+          <div class="step-content">
+            <h2><label for="printer-select">Choose your printer</label></h2>
+            <select id="printer-select"><option value="">Select a printer…</option></select>
+          </div>
+        </div>
+
+        <div class="step" id="toolhead-step">
+          <span class="number" aria-hidden="true">2</span>
+          <div class="step-content">
+            <h2><label for="toolhead-select">Choose your tool head</label></h2>
+            <p class="help">Select the tool head currently installed on your printer.</p>
+            <p class="help">Tool heads listed together use the same firmware. You can switch between them from the printer’s toolhead menu without reflashing.</p>
+            <select id="toolhead-select" disabled><option value="">Choose a printer first…</option></select>
+          </div>
+        </div>
+
+        <div class="step" id="version-step" hidden>
+          <span class="number" aria-hidden="true"></span>
+          <div class="step-content">
+            <h2><label for="version-select">Choose printer version</label></h2>
+            <select id="version-select"><option value="">Choose a version…</option></select>
+          </div>
+        </div>
+
+        <div class="step" id="bed-step" hidden>
+          <span class="number" aria-hidden="true"></span>
+          <div class="step-content">
+            <h2><label for="bed-select">Choose bed length</label></h2>
+            <select id="bed-select"><option value="">Choose a bed length…</option></select>
+          </div>
+        </div>
+
+        <div class="step" id="options-step">
+          <span class="number" aria-hidden="true"></span>
+          <div class="step-content">
+            <h2>Choose options</h2>
+            <div id="options-list" class="option-list">
+              <p class="help">Choose a tool head to see any applicable options.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="result" class="card result" hidden aria-live="polite"></section>
+      </div>
+      <p class="notice">
+        This is a selection prototype. It shows firmware paths from the Cura LE
+        configuration data; online firmware lookup and flashing are not connected yet.
+      </p>
+    </main>
+
+    <script>
+      const catalogUrl = "./firmware-configurations.json";
+      const loadingElement = document.querySelector("#loading");
+      const loadErrorElement = document.querySelector("#load-error");
+      const selectorElement = document.querySelector("#selector");
+      const printerSelect = document.querySelector("#printer-select");
+      const versionStep = document.querySelector("#version-step");
+      const versionSelect = document.querySelector("#version-select");
+      const bedStep = document.querySelector("#bed-step");
+      const bedSelect = document.querySelector("#bed-select");
+      const toolheadSelect = document.querySelector("#toolhead-select");
+      const optionsList = document.querySelector("#options-list");
+      const resultElement = document.querySelector("#result");
+      const optionLabels = { bltouch: "Is a BLTouch probe installed?", lcd: "Is an LCD screen installed?" };
+      let catalog;
+      let activeOptions = {};
+
+      // This explicit list sets the initial product-first order. Cura IDs map each
+      // printer and toolhead choice to the firmware entries in the catalog.
+      const printerLayout = [
+        { id: "taz_8", name: "TAZ 8", variants: [
+          { printerId: "taz_8", xt: "standard", bed: "Standard" },
+          { printerId: "taz_8_lbv2", xt: "standard", bed: "Long Bed v2" },
+          { printerId: "taz_8_xt", xt: "XT", bed: "Standard" },
+        ] },
+        { id: "taz_pro", name: "TAZ Pro", variants: [
+          { printerId: "taz_pro", xt: "standard", bed: "Standard" },
+          { printerId: "taz_pro_lb", xt: "standard", bed: "Long Bed" },
+          { printerId: "taz_pro_lbv2", xt: "standard", bed: "Long Bed v2" },
+          { printerId: "taz_pro_xt", xt: "XT", bed: "Standard" },
+          { printerId: "taz_pro_xt_lbv2", xt: "XT", bed: "Long Bed v2" },
+        ] },
+        { id: "workhorse_2", name: "Workhorse 2", variants: [{ printerId: "workhorse_2", xt: null, bed: "Standard" }] },
+        { id: "taz_workhorse", name: "Workhorse(+)" , variants: [{ printerId: "taz_workhorse", xt: null, bed: "Standard" }] },
+        { id: "sidekick_747", name: "SideKick 747", variants: [{ printerId: "sidekick_747", xt: null, bed: "Standard" }] },
+        { id: "sidekick_289", name: "SideKick 289", variants: [{ printerId: "sidekick_289", xt: null, bed: "Standard" }] },
+        { id: "mini_2", name: "Mini 2", variants: [{ printerId: "mini_2", xt: null, bed: "Standard" }] },
+        { id: "bio_base", name: "Bio", variants: [{ printerId: "bio_base", xt: null, bed: "Standard" }] },
+        { id: "taz_6", name: "TAZ 6", variants: [{ printerId: "taz_6", xt: null, bed: "Standard" }] },
+        { id: "taz_5", name: "TAZ 5", variants: [{ printerId: "taz_5", xt: null, bed: "Standard" }] },
+        { id: "mini_1", name: "Mini 1", variants: [{ printerId: "mini_1", xt: null, bed: "Standard" }] },
+      ];
+      let selectedFamily;
+      let selectedVariant;
+
+      function selectedCatalogPrinter() {
+        if (!selectedVariant) return undefined;
+        return catalog.printers.find((printer) => printer.id === selectedVariant.printerId);
+      }
+
+      function currentConfigurations() {
+        const printer = selectedCatalogPrinter();
+        if (!printer || !toolheadSelect.value) return [];
+        return printer.configurations.filter((item) => item.toolhead === toolheadSelect.value);
+      }
+
+      function familyVariantsForToolhead() {
+        if (!selectedFamily || !toolheadSelect.value) return [];
+        return selectedFamily.variants.flatMap((variant) => {
+          const printer = catalog.printers.find((item) => item.id === variant.printerId);
+          if (!printer) return [];
+          const configurations = printer.configurations.filter(
+            (configuration) => configuration.toolhead === toolheadSelect.value,
+          );
+          return configurations.length ? [{ variant, configurations }] : [];
+        });
+      }
+
+      function setStep(id, state) {
+        const element = document.querySelector(id);
+        element.classList.toggle("active", state === "active");
+        element.classList.toggle("complete", state === "complete");
+      }
+
+      function renumberSteps() {
+        let number = 0;
+        for (const step of document.querySelectorAll("#selector .step")) {
+          if (step.hidden) continue;
+          number += 1;
+          step.querySelector(".number").textContent = String(number);
+        }
+      }
+
+      function resetResult() {
+        resultElement.hidden = true;
+        resultElement.replaceChildren();
+      }
+
+      function help(text) {
+        const paragraph = document.createElement("p");
+        paragraph.className = "help";
+        paragraph.textContent = text;
+        return paragraph;
+      }
+
+      function textElement(tag, text, className) {
+        const element = document.createElement(tag);
+        element.textContent = text;
+        if (className) element.className = className;
+        return element;
+      }
+
+      function addDetail(list, label, value) {
+        list.append(textElement("dt", label), textElement("dd", value));
+      }
+
+      function firmwareVersion(configuration) {
+        if (configuration.firmware.version) return configuration.firmware.version;
+        const filename = configuration.firmware.file.split("/").pop();
+        const version = filename.match(/_(\d+\.\d+\.\d+(?:\.\d+)?(?:-[A-Za-z0-9.-]+)?)(?:_[0-9a-f]+)?\.(?:bin|hex)$/i);
+        return version ? version[1] : "version unspecified";
+      }
+
+      function initialize() {
+        for (const family of printerLayout) {
+          printerSelect.add(new Option(family.name, family.id));
+        }
+        loadingElement.hidden = true;
+        selectorElement.hidden = false;
+        renumberSteps();
+      }
+
+      function clearToolheads(message) {
+        toolheadSelect.replaceChildren(new Option(message, ""));
+        toolheadSelect.disabled = true;
+      }
+
+      function updateToolheadChoices() {
+        selectedFamily = printerLayout.find((family) => family.id === printerSelect.value);
+        selectedVariant = undefined;
+        versionStep.hidden = true;
+        bedStep.hidden = true;
+        versionSelect.replaceChildren(new Option("Choose a version…", ""));
+        bedSelect.replaceChildren(new Option("Choose a bed length…", ""));
+        clearToolheads("Choose a printer first…");
+        optionsList.replaceChildren(help("Choose a tool head to see any applicable options."));
+        resetResult();
+        activeOptions = {};
+
+        if (!selectedFamily) {
+          setStep("#printer-step", "active");
+          setStep("#toolhead-step", "");
+          setStep("#version-step", "");
+          setStep("#bed-step", "");
+          setStep("#options-step", "");
+          renumberSteps();
+          return;
+        }
+
+        const availableToolheads = selectedFamily.variants.flatMap((variant) => {
+          const printer = catalog.printers.find((item) => item.id === variant.printerId);
+          if (!printer) return [];
+          return printer.configurations.map((configuration) => configuration.toolhead);
+        });
+        const toolheadOptions = [...new Set(availableToolheads)].sort((left, right) => {
+          const leftIsProDual = left === "TAZ Pro Dual Extruder";
+          const rightIsProDual = right === "TAZ Pro Dual Extruder";
+          if (leftIsProDual !== rightIsProDual) return leftIsProDual ? 1 : -1;
+          return left.localeCompare(right);
+        });
+        toolheadSelect.replaceChildren(new Option("Select a tool head…", ""));
+        for (const toolhead of toolheadOptions) {
+          toolheadSelect.add(new Option(toolhead, toolhead));
+        }
+        toolheadSelect.disabled = false;
+
+        setStep("#printer-step", "complete");
+        setStep("#toolhead-step", "active");
+        setStep("#version-step", "");
+        setStep("#bed-step", "");
+        setStep("#options-step", "");
+        renumberSteps();
+      }
+
+      function updateVersionChoices() {
+        selectedVariant = undefined;
+        versionStep.hidden = true;
+        bedStep.hidden = true;
+        bedSelect.replaceChildren(new Option("Choose a bed length…", ""));
+        optionsList.replaceChildren(help("Choose any printer options to find the matching firmware."));
+        resetResult();
+        activeOptions = {};
+
+        const entries = familyVariantsForToolhead();
+        if (!entries.length) return;
+
+        const versions = [...new Set(entries.map((entry) => entry.variant.xt).filter(Boolean))];
+        if (versions.length > 1) {
+          versionStep.hidden = false;
+          versionSelect.replaceChildren(new Option("Choose standard or XT…", ""));
+          for (const version of versions) {
+            versionSelect.add(new Option(version === "XT" ? "XT" : "Standard", version));
+          }
+          setStep("#toolhead-step", "complete");
+          setStep("#version-step", "active");
+          setStep("#bed-step", "");
+          setStep("#options-step", "");
+          renumberSteps();
+          return;
+        }
+
+        versionSelect.replaceChildren(new Option(versions[0] || "", versions[0] || ""));
+        versionSelect.value = versions[0] || "";
+        setStep("#toolhead-step", "complete");
+        setStep("#version-step", "");
+        updateBedChoices();
+      }
+
+      function updateBedChoices() {
+        if (!versionStep.hidden) setStep("#version-step", "complete");
+        const entries = familyVariantsForToolhead().filter((entry) =>
+          entry.variant.xt === null || entry.variant.xt === versionSelect.value,
+        );
+        const beds = [...new Set(entries.map((entry) => entry.variant.bed))];
+        bedSelect.replaceChildren();
+        bedStep.hidden = beds.length <= 1;
+
+        if (!entries.length) {
+          selectedVariant = undefined;
+          clearToolheads("Choose a printer option first…");
+          optionsList.replaceChildren(help("No firmware mapping was found for this combination."));
+          resetResult();
+          renumberSteps();
+          return;
+        }
+
+        if (beds.length > 1) {
+          bedSelect.add(new Option("Choose a bed length…", ""));
+          for (const bed of beds) bedSelect.add(new Option(bed, bed));
+          selectedVariant = undefined;
+          optionsList.replaceChildren(help("Choose a bed length to continue."));
+          resetResult();
+          setStep("#bed-step", "active");
+          setStep("#options-step", "");
+          renumberSteps();
+          return;
+        }
+
+        selectBed(beds[0]);
+      }
+
+      function selectBed(bed) {
+        const entries = familyVariantsForToolhead().filter((entry) =>
+          (entry.variant.xt === null || entry.variant.xt === versionSelect.value)
+            && entry.variant.bed === bed,
+        );
+        selectedVariant = entries.length ? entries[0].variant : undefined;
+        if (!selectedVariant) return;
+
+        if (bedStep.hidden) {
+          bedSelect.add(new Option(bed, bed));
+          bedSelect.value = bed;
+        }
+        setStep("#bed-step", bedStep.hidden ? "" : "complete");
+        renderOptions();
+        renumberSteps();
+      }
+      function renderOptions() {
+        const configurations = currentConfigurations();
+        optionsList.replaceChildren();
+        resetResult();
+        activeOptions = {};
+
+        if (!configurations.length) {
+          optionsList.append(help("Choose a tool head to see any applicable options."));
+          setStep("#toolhead-step", "active");
+          setStep("#options-step", "");
+          return;
+        }
+
+        const keys = [...new Set(configurations.flatMap((item) => Object.keys(item.options || {})))];
+        if (!keys.length) {
+          optionsList.append(help("There are no additional options for this tool head."));
+          setStep("#toolhead-step", "complete");
+          setStep("#options-step", "complete");
+          showMatch();
+          return;
+        }
+
+        optionsList.append(help("Select an answer for each option. No answer is preselected. The matching firmware appears after all questions are answered."));
+        for (const key of keys) {
+          const values = [...new Set(configurations.map((item) => item.options?.[key])
+            .filter((value) => value !== undefined))];
+          const isBoolean = values.some((value) => typeof value === "boolean");
+          const hasUnset = !isBoolean
+            && configurations.some((item) => item.options?.[key] === undefined);
+          const choices = isBoolean
+            ? [{ value: true, label: "Yes" }, { value: false, label: "No" }]
+            : values.map((value) => ({
+                value,
+                label: key === "lcd"
+                  ? (value === "with" ? "Yes, LCD installed" : "No LCD screen")
+                  : String(value),
+              }));
+          if (hasUnset) choices.push({ value: null, label: "Not applicable" });
+
+          const fieldset = document.createElement("fieldset");
+          fieldset.className = "option-question";
+          const legend = document.createElement("legend");
+          legend.textContent = optionLabels[key] || key;
+          const choiceList = document.createElement("div");
+          choiceList.className = "option-choices";
+          activeOptions[key] = undefined;
+
+          choices.forEach((choice, index) => {
+            const label = document.createElement("label");
+            label.className = "option-choice";
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.name = "option-" + key;
+            input.required = true;
+            input.value = String(index);
+            input.addEventListener("change", () => {
+              activeOptions[key] = choice.value;
+              showMatch();
+            });
+            label.append(input, document.createTextNode(choice.label));
+            choiceList.append(label);
+          });
+
+          fieldset.append(legend, choiceList);
+          optionsList.append(fieldset);
+        }
+
+        setStep("#toolhead-step", "complete");
+        setStep("#options-step", "active");
+        showMatch();
+      }
+      function isMatch(configuration) {
+        return Object.entries(activeOptions).every(([key, selected]) => {
+          const value = configuration.options?.[key];
+          if (selected === null) return value === undefined;
+          if (selected === false && value === undefined) return true;
+          return value === selected;
+        });
+      }
+      function showMatch() {
+        if (Object.values(activeOptions).some((value) => value === undefined)) {
+          resetResult();
+          return;
+        }
+        const match = currentConfigurations().find(isMatch);
+        resultElement.replaceChildren();
+        resultElement.hidden = false;
+
+        if (!match) {
+          resultElement.append(textElement("p", "No matching firmware entry was found for this selection.", "error"));
+          return;
+        }
+
+        resultElement.append(
+          textElement("p", "Matching firmware", "kicker"),
+          textElement("h2", match.toolhead + " · " + firmwareVersion(match)),
+        );
+        const details = document.createElement("dl");
+        addDetail(details, "Printer", selectedFamily.name);
+        if (selectedVariant.xt !== null) addDetail(details, "Version", selectedVariant.xt === "XT" ? "XT" : "Standard");
+        addDetail(details, "Bed length", selectedVariant.bed);
+        addDetail(details, "Format", "." + match.firmware.format.toUpperCase());
+        addDetail(details, "Catalog path", match.firmware.file);
+        if (match.firmwareToolheadName) addDetail(details, "Firmware profile", match.firmwareToolheadName);
+        resultElement.append(details);
+
+        if (match.firmware.presentInCuraInstall === false) {
+          resultElement.append(textElement(
+            "p",
+            "Cura LE lists this firmware path, but the file was not found in the local Cura installation.",
+            "notice warning",
+          ));
+        }
+        const definitionIds = [match.definitionId, ...(match.additionalDefinitionIds || [])];
+        resultElement.append(textElement("p", "Cura definitions: " + definitionIds.join(", "), "notice"));
+        setStep("#options-step", "complete");
+      }
+
+      printerSelect.addEventListener("change", updateToolheadChoices);
+      toolheadSelect.addEventListener("change", updateVersionChoices);
+      versionSelect.addEventListener("change", updateBedChoices);
+      bedSelect.addEventListener("change", () => selectBed(bedSelect.value));
+
+      fetch(catalogUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error("Could not load the firmware configuration JSON (" + response.status + ").");
+          return response.json();
+        })
+        .then((data) => {
+          catalog = data;
+          initialize();
+        })
+        .catch((error) => {
+          loadingElement.hidden = true;
+          loadErrorElement.hidden = false;
+          loadErrorElement.textContent = error.message
+            + " Open this page through a local web server so the browser can load its JSON file.";
+        });
+    </script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
