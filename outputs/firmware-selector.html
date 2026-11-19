@@ -74,7 +74,7 @@
       .result { margin-top: 0; padding: 20px 22px; position: sticky; top: 18px; }
       .result[hidden], #selector[hidden] { display: none; }
       .kicker { margin: 0 0 5px; color: var(--green-dark); font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
-      .result h2 { margin: 0 0 14px; font-size: 20px; }
+      .result h2 { margin: 0 0 14px; font-size: 20px; overflow-wrap: anywhere; }
       dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 13px; }
       dt { color: var(--muted); }
       dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
@@ -131,7 +131,7 @@
 
     <main>
       <h1>Find Your LulzBot Firmware</h1>
-      <p class="intro">Choose your printer and installed tool head to find the matching firmware listed in the configuration catalog.</p>
+      <p class="intro">Choose your printer, installed tool head, and options to find matching firmware.</p>
 
       <div id="loading" class="loading" role="status">Loading printer configurations…</div>
       <p id="load-error" class="error" hidden></p>
@@ -185,10 +185,6 @@
 
       <section id="result" class="card result" hidden aria-live="polite"></section>
       </div>
-      <p class="notice">
-        This is a selection prototype. It shows firmware paths from the Cura LE
-        configuration data; online firmware lookup and flashing are not connected yet.
-      </p>
     </main>
 
     <script>
@@ -215,6 +211,7 @@
           { printerId: "taz_8", xt: "standard", bed: "Standard" },
           { printerId: "taz_8_lbv2", xt: "standard", bed: "Long Bed v2" },
           { printerId: "taz_8_xt", xt: "XT", bed: "Standard" },
+          { printerId: "taz_8_xt_lbv2", xt: "XT", bed: "Long Bed v2" },
         ] },
         { id: "taz_pro", name: "TAZ Pro", variants: [
           { printerId: "taz_pro", xt: "standard", bed: "Standard" },
@@ -297,9 +294,9 @@
         list.append(textElement("dt", label), textElement("dd", value));
       }
 
-      function firmwareVersion(configuration) {
-        if (configuration.firmware.version) return configuration.firmware.version;
-        const filename = configuration.firmware.file.split("/").pop();
+      function firmwareVersion(firmware) {
+        if (firmware.version) return firmware.version;
+        const filename = firmware.file.split("/").pop();
         const version = filename.match(/_(\d+\.\d+\.\d+(?:\.\d+)?(?:-[A-Za-z0-9.-]+)?)(?:_[0-9a-f]+)?\.(?:bin|hex)$/i);
         return version ? version[1] : "version unspecified";
       }
@@ -463,7 +460,7 @@
 
         const keys = [...new Set(configurations.flatMap((item) => Object.keys(item.options || {})))];
         if (!keys.length) {
-          optionsList.append(help("There are no additional options for this tool head."));
+          optionsList.append(help("There are no additional options for this configuration."));
           setStep("#toolhead-step", "complete");
           setStep("#options-step", "complete");
           showMatch();
@@ -540,29 +537,32 @@
           resultElement.append(textElement("p", "No matching firmware entry was found for this selection.", "error"));
           return;
         }
+        const firmware = catalog.firmwareBuilds.find((build) => build.id === match.firmwareId);
+        if (!firmware) {
+          resultElement.append(textElement("p", "The selected configuration refers to an unknown firmware ID.", "error"));
+          return;
+        }
 
         resultElement.append(
           textElement("p", "Matching firmware", "kicker"),
-          textElement("h2", match.toolhead + " · " + firmwareVersion(match)),
+          textElement("h2", firmware.file.split("/").pop()),
         );
         const details = document.createElement("dl");
         addDetail(details, "Printer", selectedFamily.name);
+        addDetail(details, "Tool head", match.toolhead);
         if (selectedVariant.xt !== null) addDetail(details, "Version", selectedVariant.xt === "XT" ? "XT" : "Standard");
         addDetail(details, "Bed length", selectedVariant.bed);
-        addDetail(details, "Format", "." + match.firmware.format.toUpperCase());
-        addDetail(details, "Catalog path", match.firmware.file);
+        addDetail(details, "Catalog path", firmware.file);
         if (match.firmwareToolheadName) addDetail(details, "Firmware profile", match.firmwareToolheadName);
         resultElement.append(details);
 
-        if (match.firmware.presentInCuraInstall === false) {
+        if (firmware.presentInCuraInstall === false) {
           resultElement.append(textElement(
             "p",
-            "Cura LE lists this firmware path, but the file was not found in the local Cura installation.",
+            "This firmware file was not found in the local Cura LE installation.",
             "notice warning",
           ));
         }
-        const definitionIds = [match.definitionId, ...(match.additionalDefinitionIds || [])];
-        resultElement.append(textElement("p", "Cura definitions: " + definitionIds.join(", "), "notice"));
         setStep("#options-step", "complete");
       }
 
@@ -571,7 +571,7 @@
       versionSelect.addEventListener("change", updateBedChoices);
       bedSelect.addEventListener("change", () => selectBed(bedSelect.value));
 
-      fetch(catalogUrl)
+      fetch(catalogUrl, { cache: "no-store" })
         .then((response) => {
           if (!response.ok) throw new Error("Could not load the firmware configuration JSON (" + response.status + ").");
           return response.json();

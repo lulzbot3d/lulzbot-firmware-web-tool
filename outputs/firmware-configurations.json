@@ -1,13 +1,580 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "source": {
     "application": "Cura LE",
     "version": "4.13",
     "definitionsDirectory": "resources/definitions",
     "firmwareDirectory": "resources/firmware",
-    "mappingBasis": "Firmware paths originate in Cura LE printer definitions. User-facing toolhead choices are normalized where multiple Cura mappings use the same firmware; sourceToolheadNames and definition IDs retain the original Cura mapping.",
-    "caveat": "This is a snapshot of the local Cura LE 4.13 data. It does not verify that firmware files are currently available at firmware.lulzbot.com."
+    "mappingBasis": "The firmwareBuilds catalog lists each firmware file once. Active PlatformIO environments are listed first; older Cura LE firmware entries remain as legacy records. Printer configurations refer to firmware by ID.",
+    "caveat": "This catalog combines Cura LE 4.13 mappings with the supplied list of current PlatformIO build environments. Five active filenames were inferred from naming conventions and are marked filenameInferred; file availability has not been verified."
   },
+  "firmwareBuilds": [
+    {
+      "id": "mini2_galaxy",
+      "environment": "Mini2_Galaxy",
+      "file": "Mini2/Marlin_Mini2_Galaxy_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "mini2_universal",
+      "environment": "Mini2_Universal",
+      "file": "Mini2/Marlin_Mini2_Universal_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "sidekick289_galaxy",
+      "environment": "SideKick289_Galaxy",
+      "file": "SideKick_289/Marlin_SideKick289_Galaxy_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "sidekick289_universal",
+      "environment": "SideKick289_Universal",
+      "file": "SideKick_289/Marlin_SideKick289_Universal_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "sidekick747_galaxy",
+      "environment": "SideKick747_Galaxy",
+      "file": "SideKick_747/Marlin_SideKick747_Galaxy_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "sidekick747_universal",
+      "environment": "SideKick747_Universal",
+      "file": "SideKick_747/Marlin_SideKick747_Universal_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "taz8_galaxy",
+      "environment": "TAZ8_Galaxy",
+      "file": "TAZ8/Marlin_TAZ8_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "taz8_galaxy_dual",
+      "environment": "TAZ8_Galaxy_Dual",
+      "file": "TAZ8/Marlin_TAZ8_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "taz8_longbed_galaxy",
+      "environment": "TAZ8_LongBed_Galaxy",
+      "file": "TAZ8_LongBed/Marlin_TAZ8_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false
+    },
+    {
+      "id": "taz8_longbed_galaxy_dual",
+      "environment": "TAZ8_LongBed_Galaxy_Dual",
+      "file": "TAZ8_LongBed/Marlin_TAZ8_LongBed_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false,
+      "filenameInferred": true
+    },
+    {
+      "id": "taz8xt_galaxy",
+      "environment": "TAZ8XT_Galaxy",
+      "file": "TAZ8XT/Marlin_TAZ8XT_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "taz8xt_galaxy_dual",
+      "environment": "TAZ8XT_Galaxy_Dual",
+      "file": "TAZ8XT/Marlin_TAZ8XT_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "taz8xt_longbed_galaxy",
+      "environment": "TAZ8XT_LongBed_Galaxy",
+      "file": "TAZ8XT_LongBed/Marlin_TAZ8XT_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false,
+      "filenameInferred": true
+    },
+    {
+      "id": "taz8xt_longbed_galaxy_dual",
+      "environment": "TAZ8XT_LongBed_Galaxy_Dual",
+      "file": "TAZ8XT_LongBed/Marlin_TAZ8XT_LongBed_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false,
+      "filenameInferred": true
+    },
+    {
+      "id": "tazpro_galaxy",
+      "environment": "TAZPro_Galaxy",
+      "file": "Pro/Marlin_TAZPro_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_galaxy_bltouch",
+      "environment": "TAZPro_Galaxy_BLTouch",
+      "file": "Pro/Marlin_TAZPro_Galaxy_BLTouch_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48-BLTouch",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_galaxy_dual",
+      "environment": "TAZPro_Galaxy_Dual",
+      "file": "Pro/Marlin_TAZPro_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_universal",
+      "environment": "TAZPro_Universal",
+      "file": "Pro/Marlin_TAZPro_Universal_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_universal_bltouch",
+      "environment": "TAZPro_Universal_BLTouch",
+      "file": "Pro/Marlin_TAZPro_Universal_BLTouch_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48-BLTouch",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_universal_dual",
+      "environment": "TAZPro_Universal_Dual",
+      "file": "Pro/Marlin_TAZPro_Universal_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_longbed_galaxy",
+      "environment": "TAZPro_LongBed_Galaxy",
+      "file": "Pro_LongBed/Marlin_TAZPro_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_longbed_universal",
+      "environment": "TAZPro_LongBed_Universal",
+      "file": "Pro_LongBed/Marlin_TAZPro_LongBed_Universal_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazpro_longbedv2_galaxy",
+      "environment": "TAZPro_LongBedv2_Galaxy",
+      "file": "Pro_LongBed_v2/Marlin_TAZPro_LongBedv2_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_galaxy",
+      "environment": "TAZProXT_Galaxy",
+      "file": "Pro_XT/Marlin_TAZProXT_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_galaxy_bltouch",
+      "environment": "TAZProXT_Galaxy_BLTouch",
+      "file": "Pro_XT/Marlin_TAZProXT_Galaxy_BLTouch_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48-BLTouch",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_galaxy_dual",
+      "environment": "TAZProXT_Galaxy_Dual",
+      "file": "Pro_XT/Marlin_TAZProXT_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_universal",
+      "environment": "TAZProXT_Universal",
+      "file": "Pro_XT/Marlin_TAZProXT_Universal_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_universal_bltouch",
+      "environment": "TAZProXT_Universal_BLTouch",
+      "file": "Pro_XT/Marlin_TAZProXT_Universal_BLTouch_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48-BLTouch",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_universal_dual",
+      "environment": "TAZProXT_Universal_Dual",
+      "file": "Pro_XT/Marlin_TAZProXT_Universal_Dual_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "tazproxt_longbed_galaxy",
+      "environment": "TAZProXT_LongBed_Galaxy",
+      "file": "Pro_XT_LongBed/Marlin_TAZProXT_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false,
+      "filenameInferred": true
+    },
+    {
+      "id": "tazproxt_longbed_universal",
+      "environment": "TAZProXT_LongBed_Universal",
+      "file": "Pro_XT_LongBed/Marlin_TAZProXT_LongBed_Universal_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": false,
+      "filenameInferred": true
+    },
+    {
+      "id": "tazproxt_longbedv2_galaxy",
+      "environment": "TAZProXT_LongBedv2_Galaxy",
+      "file": "Pro_XT_LongBed_v2/Marlin_TAZProXT_LongBedv2_Galaxy_2.1.3.0.48_29556655fa.bin",
+      "format": "bin",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "workhorse_galaxy",
+      "environment": "Workhorse_Galaxy",
+      "file": "Workhorse/Marlin_Workhorse_Galaxy_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "workhorse_universal",
+      "environment": "Workhorse_Universal",
+      "file": "Workhorse/Marlin_Workhorse_Universal_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "workhorse2_galaxy",
+      "environment": "Workhorse2_Galaxy",
+      "file": "Workhorse2/Marlin_Workhorse2_Galaxy_2.1.3.0.48_29556655fa.hex",
+      "format": "hex",
+      "version": "2.1.3.0.48",
+      "presentInCuraInstall": true
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_singleextruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_SingleExtruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_singleextruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_SingleExtruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_m175_2_0_0_144_1_8c651988_hex",
+      "file": "Mini/Marlin_MiniLCD_M175_2.0.0.144.1_8c651988.hex",
+      "format": "hex",
+      "version": "2.0.0.144.1-LCD",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_m175_2_0_0_144_1_8c651988_hex",
+      "file": "Mini/Marlin_Mini_M175_2.0.0.144.1_8c651988.hex",
+      "format": "hex",
+      "version": "2.0.0.144.1",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_singleextruderaerov2_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_SingleExtruderAeroV2_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_singleextruderaerov2_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_SingleExtruderAeroV2_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_aerostruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_Aerostruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_aerostruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_Aerostruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_hardenedsteel_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_HardenedSteel_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_hardenedsteel_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_HardenedSteel_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_hardenedsteelplus_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_HardenedSteelPlus_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_hardenedsteelplus_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_HardenedSteelPlus_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_smalllayer_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_SmallLayer_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_smalllayer_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_SmallLayer_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_minilcd_flexystruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_MiniLCD_Flexystruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_mini_marlin_mini_flexystruder_2_0_0_144_aded3b617_hex",
+      "file": "Mini/Marlin_Mini_Flexystruder_2.0.0.144_aded3b617.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_flexydually_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_FlexyDually_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_hardenedsteel_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_HardenedSteel_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_dualextruderv3_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_DualExtruderV3_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_smalllayer_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_SmallLayer_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_hardenedsteelplus_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_HardenedSteelPlus_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_m175_2_0_0_144_1_ffaa466_hex",
+      "file": "TAZ5/Marlin_TAZ5_M175_2.0.0.144.1_ffaa466.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_singleextruderaerov2_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_SingleExtruderAeroV2_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_moarstruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_Moarstruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_flexystruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_Flexystruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_singleextruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_SingleExtruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": null,
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz5_marlin_taz5_dualextruderv2_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ5/Marlin_TAZ5_DualExtruderV2_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_dualextruderv2_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_DualExtruderV2_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_dualextruderv3_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_DualExtruderV3_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_flexystruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_Flexystruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_aerostruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_Aerostruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_moarstruder_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_Moarstruder_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_flexydually_1_1_9_34_5f9c029d1_hex",
+      "file": "TAZ6/Marlin_TAZ6_FlexyDually_1.1.9.34_5f9c029d1.hex",
+      "format": "hex",
+      "version": "1.1.9.34",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_taz6_marlin_taz6_universal_2_0_9_0_13_80a6628_hex",
+      "file": "TAZ6/Marlin_TAZ6_Universal_2.0.9.0.13_80a6628.hex",
+      "format": "hex",
+      "version": "2.0.9.0.13",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    },
+    {
+      "id": "legacy_bio_marlin_bio_singleextruder_2_0_0_176_hex",
+      "file": "Bio/Marlin_Bio_2.0.0.176.hex",
+      "format": "hex",
+      "version": "2.0.0.176",
+      "presentInCuraInstall": true,
+      "status": "legacy"
+    }
+  ],
   "printers": [
     {
       "id": "taz_8_xt",
@@ -19,12 +586,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "TAZ8XT/Marlin_TAZ8XT_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "taz8xt_galaxy"
         },
         {
           "definitionId": "taz_8_xt_twnb175",
@@ -32,12 +594,7 @@
           "toolhead": "Twin Nebula 175 or Twin Nebula 285",
           "firmwareToolheadName": "Galaxy Dual Extruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "TAZ8XT/Marlin_TAZ8XT_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "taz8xt_galaxy_dual"
         }
       ]
     },
@@ -51,12 +608,7 @@
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_LongBed/Marlin_TAZPro_LongBed_Universal_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_longbed_universal"
         },
         {
           "definitionId": "taz_pro_lb_galaxy",
@@ -64,12 +616,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_LongBed/Marlin_TAZPro_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_longbed_galaxy"
         }
       ]
     },
@@ -83,12 +630,7 @@
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Mini2/Marlin_Mini2_Universal_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "mini2_universal"
         },
         {
           "definitionId": "mini_2_galaxy",
@@ -96,12 +638,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Mini2/Marlin_Mini2_Galaxy_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "mini2_galaxy"
         }
       ]
     },
@@ -115,12 +652,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_XT_LongBed_v2/Marlin_TAZProXT_LongBedv2_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_longbedv2_galaxy"
         }
       ]
     },
@@ -134,12 +666,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_LongBed_v2/Marlin_TAZPro_LongBedv2_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_longbedv2_galaxy"
         }
       ]
     },
@@ -153,12 +680,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Workhorse2/Marlin_Workhorse2_Galaxy_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "workhorse2_galaxy"
         }
       ]
     },
@@ -171,30 +693,16 @@
           "curaDefinitionName": "SideKick 289",
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
-          "options": {
-            "lcd": "with"
-          },
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "SideKick_289/Marlin_SideKick_289_Universal_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "options": {},
+          "firmwareId": "sidekick289_universal"
         },
         {
           "definitionId": "sidekick_289_galaxy",
           "curaDefinitionName": "SideKick 289",
           "toolhead": "Meteor 175 or Meteor 285",
           "firmwareToolheadName": "Galaxy Series",
-          "options": {
-            "lcd": "with"
-          },
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "SideKick_289/Marlin_SideKick_289_Galaxy_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "options": {},
+          "firmwareId": "sidekick289_galaxy"
         }
       ]
     },
@@ -210,12 +718,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_SingleExtruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_singleextruder_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_single",
@@ -225,12 +728,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_SingleExtruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_singleextruder_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_m175",
@@ -240,12 +738,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": "2.0.0.144.1-LCD",
-            "file": "Mini/Marlin_MiniLCD_M175_2.0.0.144.1_8c651988.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_m175_2_0_0_144_1_8c651988_hex"
         },
         {
           "definitionId": "mini_1_m175",
@@ -255,12 +748,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": "2.0.0.144.1",
-            "file": "Mini/Marlin_Mini_M175_2.0.0.144.1_8c651988.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_m175_2_0_0_144_1_8c651988_hex"
         },
         {
           "definitionId": "mini_1_se",
@@ -270,12 +758,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_SingleExtruderAeroV2_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_singleextruderaerov2_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_se",
@@ -285,12 +768,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_SingleExtruderAeroV2_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_singleextruderaerov2_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_aerostruder",
@@ -300,12 +778,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_Aerostruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_aerostruder_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_aerostruder",
@@ -315,12 +788,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_Aerostruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_aerostruder_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_hs",
@@ -330,12 +798,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_HardenedSteel_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_hardenedsteel_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_hs",
@@ -345,12 +808,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_HardenedSteel_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_hardenedsteel_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_hsplus",
@@ -360,12 +818,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_HardenedSteelPlus_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_hardenedsteelplus_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_hsplus",
@@ -375,12 +828,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_HardenedSteelPlus_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_hardenedsteelplus_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_sl",
@@ -390,12 +838,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_SmallLayer_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_smalllayer_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_sl",
@@ -405,12 +848,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_SmallLayer_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_smalllayer_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_flexystruder",
@@ -420,12 +858,7 @@
           "options": {
             "lcd": "with"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_MiniLCD_Flexystruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_minilcd_flexystruder_2_0_0_144_aded3b617_hex"
         },
         {
           "definitionId": "mini_1_flexystruder",
@@ -435,12 +868,7 @@
           "options": {
             "lcd": "without"
           },
-          "firmware": {
-            "version": null,
-            "file": "Mini/Marlin_Mini_Flexystruder_2.0.0.144_aded3b617.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_mini_marlin_mini_flexystruder_2_0_0_144_aded3b617_hex"
         }
       ]
     },
@@ -454,12 +882,7 @@
           "toolhead": "TAZ Pro Dual Extruder",
           "firmwareToolheadName": "DualExtruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro/Marlin_TAZPro_Universal_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_universal_dual"
         },
         {
           "definitionId": "taz_pro_twnb175",
@@ -467,12 +890,7 @@
           "toolhead": "Twin Nebula 175 or Twin Nebula 285",
           "firmwareToolheadName": "Galaxy Dual Extruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro/Marlin_TAZPro_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_galaxy_dual"
         },
         {
           "definitionId": "taz_pro_galaxy",
@@ -480,12 +898,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro/Marlin_TAZPro_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_galaxy"
         },
         {
           "definitionId": "taz_pro_galaxy",
@@ -495,12 +908,7 @@
           "options": {
             "bltouch": true
           },
-          "firmware": {
-            "version": "2.1.3.0.48-BLTouch",
-            "file": "Pro/Marlin_TAZPro_Galaxy_BLTouch_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_galaxy_bltouch"
         },
         {
           "definitionId": "taz_pro",
@@ -508,12 +916,7 @@
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro/Marlin_TAZPro_Universal_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_universal"
         },
         {
           "definitionId": "taz_pro",
@@ -523,12 +926,7 @@
           "options": {
             "bltouch": true
           },
-          "firmware": {
-            "version": "2.1.3.0.48-BLTouch",
-            "file": "Pro/Marlin_TAZPro_Universal_BLTouch_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazpro_universal_bltouch"
         }
       ]
     },
@@ -542,12 +940,7 @@
           "toolhead": "FlexyDually v2",
           "firmwareToolheadName": "FlexyDually v2",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ5/Marlin_TAZ5_FlexyDually_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_flexydually_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_hs",
@@ -555,12 +948,7 @@
           "toolhead": "HS | 0.80 mm | Hardened SST",
           "firmwareToolheadName": "HardenedSteel",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_HardenedSteel_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_hardenedsteel_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_dual_v3",
@@ -568,12 +956,7 @@
           "toolhead": "Dual v3",
           "firmwareToolheadName": "DualExtruder v3",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ5/Marlin_TAZ5_DualExtruderV3_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_dualextruderv3_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_sl",
@@ -581,12 +964,7 @@
           "toolhead": "SL | 0.25 mm | Nickel-Plated Copper",
           "firmwareToolheadName": "SmallLayer",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_SmallLayer_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_smalllayer_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_hsplus",
@@ -594,12 +972,7 @@
           "toolhead": "HS+ | 1.20 mm | Hardened SST",
           "firmwareToolheadName": "HardenedSteelPlus",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_HardenedSteelPlus_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_hardenedsteelplus_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_m175",
@@ -607,12 +980,7 @@
           "toolhead": "M175 | 0.50 mm | Carbide Coated Copper",
           "firmwareToolheadName": "lutefisk",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_M175_2.0.0.144.1_ffaa466.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_m175_2_0_0_144_1_ffaa466_hex"
         },
         {
           "definitionId": "taz_5_se",
@@ -620,12 +988,7 @@
           "toolhead": "SE | 0.50 mm | Nickel-Plated Copper",
           "firmwareToolheadName": "SingleExtruderAeroV2",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_SingleExtruderAeroV2_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_singleextruderaerov2_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_moarstruder",
@@ -633,12 +996,7 @@
           "toolhead": "MOARstruder",
           "firmwareToolheadName": "MOARstruder",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ5/Marlin_TAZ5_Moarstruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_moarstruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_flexy_v2",
@@ -646,12 +1004,7 @@
           "toolhead": "Flexystruder v2",
           "firmwareToolheadName": "Flexystruder",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ5/Marlin_TAZ5_Flexystruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_flexystruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_single",
@@ -659,12 +1012,7 @@
           "toolhead": "Single Extruder",
           "firmwareToolheadName": "SingleExtruder",
           "options": {},
-          "firmware": {
-            "version": null,
-            "file": "TAZ5/Marlin_TAZ5_SingleExtruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_singleextruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_5_dual_v2",
@@ -672,12 +1020,7 @@
           "toolhead": "Dual v2",
           "firmwareToolheadName": "DualExtruder v2",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ5/Marlin_TAZ5_DualExtruderV2_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz5_marlin_taz5_dualextruderv2_1_1_9_34_5f9c029d1_hex"
         }
       ]
     },
@@ -691,12 +1034,7 @@
           "toolhead": "Dual v2",
           "firmwareToolheadName": "DualExtruder v2",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_DualExtruderV2_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_dualextruderv2_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6_dual_v3",
@@ -704,12 +1042,7 @@
           "toolhead": "Dual v3",
           "firmwareToolheadName": "DualExtruder v3",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_DualExtruderV3_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_dualextruderv3_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6_flexy_v2",
@@ -717,12 +1050,7 @@
           "toolhead": "Flexystruder v2",
           "firmwareToolheadName": "Flexystruder",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_Flexystruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_flexystruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6_aerostruder",
@@ -730,12 +1058,7 @@
           "toolhead": "Aerostruder",
           "firmwareToolheadName": "Aerostruder",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_Aerostruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_aerostruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6_moarstruder",
@@ -743,12 +1066,7 @@
           "toolhead": "MOARstruder",
           "firmwareToolheadName": "MOARstruder",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_Moarstruder_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_moarstruder_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6_flexy_dually_v2",
@@ -756,12 +1074,7 @@
           "toolhead": "FlexyDually v2",
           "firmwareToolheadName": "FlexyDually v2",
           "options": {},
-          "firmware": {
-            "version": "1.1.9.34",
-            "file": "TAZ6/Marlin_TAZ6_FlexyDually_1.1.9.34_5f9c029d1.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_flexydually_1_1_9_34_5f9c029d1_hex"
         },
         {
           "definitionId": "taz_6",
@@ -769,12 +1082,7 @@
           "toolhead": "Universal",
           "firmwareToolheadName": "Universal",
           "options": {},
-          "firmware": {
-            "version": "2.0.9.0.13",
-            "file": "TAZ6/Marlin_TAZ6_Universal_2.0.9.0.13_80a6628.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "legacy_taz6_marlin_taz6_universal_2_0_9_0_13_80a6628_hex"
         }
       ]
     },
@@ -788,12 +1096,7 @@
           "toolhead": "Twin Nebula 175 or Twin Nebula 285",
           "firmwareToolheadName": "Galaxy Dual Extruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "TAZ8/Marlin_TAZ8_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "taz8_galaxy_dual"
         },
         {
           "definitionId": "taz_8_galaxy",
@@ -801,12 +1104,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "TAZ8/Marlin_TAZ8_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "taz8_galaxy"
         }
       ]
     },
@@ -820,12 +1118,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Workhorse/Marlin_Workhorse_Galaxy_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "workhorse_galaxy"
         },
         {
           "definitionId": "taz_workhorse",
@@ -833,12 +1126,7 @@
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Workhorse/Marlin_Workhorse_Universal_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "workhorse_universal"
         }
       ]
     },
@@ -852,12 +1140,7 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_XT/Marlin_TAZProXT_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_galaxy"
         },
         {
           "definitionId": "taz_pro_xt_galaxy",
@@ -867,12 +1150,7 @@
           "options": {
             "bltouch": true
           },
-          "firmware": {
-            "version": "2.1.3.0.48-BLTouch",
-            "file": "Pro_XT/Marlin_TAZProXT_Galaxy_BLTouch_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_galaxy_bltouch"
         },
         {
           "definitionId": "taz_pro_xt",
@@ -880,12 +1158,7 @@
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_XT/Marlin_TAZProXT_Universal_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_universal"
         },
         {
           "definitionId": "taz_pro_xt",
@@ -895,12 +1168,7 @@
           "options": {
             "bltouch": true
           },
-          "firmware": {
-            "version": "2.1.3.0.48-BLTouch",
-            "file": "Pro_XT/Marlin_TAZProXT_Universal_BLTouch_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_universal_bltouch"
         },
         {
           "definitionId": "taz_pro_xt_dual",
@@ -908,12 +1176,7 @@
           "toolhead": "TAZ Pro Dual Extruder",
           "firmwareToolheadName": "DualExtruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_XT/Marlin_TAZProXT_Universal_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_universal_dual"
         },
         {
           "definitionId": "taz_pro_xt_twnb175",
@@ -921,12 +1184,7 @@
           "toolhead": "Twin Nebula 175 or Twin Nebula 285",
           "firmwareToolheadName": "Galaxy Dual Extruder",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "Pro_XT/Marlin_TAZProXT_Galaxy_Dual_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": true
-          }
+          "firmwareId": "tazproxt_galaxy_dual"
         }
       ]
     },
@@ -940,15 +1198,10 @@
           "toolhead": "Syringe Pump",
           "firmwareToolheadName": "SingleExtruder",
           "options": {},
-          "firmware": {
-            "version": "2.0.0.176",
-            "file": "Bio/Marlin_Bio_SingleExtruder_2.0.0.176.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          },
           "sourceToolheadNames": [
             "SingleExtruder"
-          ]
+          ],
+          "firmwareId": "legacy_bio_marlin_bio_singleextruder_2_0_0_176_hex"
         }
       ]
     },
@@ -962,12 +1215,15 @@
           "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
           "firmwareToolheadName": "Galaxy Series",
           "options": {},
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "TAZ8_LongBed/Marlin_TAZ8_LongBed_Galaxy_2.1.3.0.48_29556655fa.bin",
-            "format": "bin",
-            "presentInCuraInstall": false
-          }
+          "firmwareId": "taz8_longbed_galaxy"
+        },
+        {
+          "definitionId": "taz_8_lbv2_twnb175",
+          "curaDefinitionName": "TAZ 8 Long Bed v2 | Twin Nebula",
+          "toolhead": "Twin Nebula 175 or Twin Nebula 285",
+          "firmwareToolheadName": "Galaxy Dual Extruder",
+          "options": {},
+          "firmwareId": "taz8_longbed_galaxy_dual"
         }
       ]
     },
@@ -980,30 +1236,38 @@
           "curaDefinitionName": "SideKick 747",
           "toolhead": "Universal Tool Head",
           "firmwareToolheadName": "Legacy Universal",
-          "options": {
-            "lcd": "with"
-          },
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "SideKick_747/Marlin_SideKick_747_Universal_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "options": {},
+          "firmwareId": "sidekick747_universal"
         },
         {
           "definitionId": "sidekick_747_galaxy",
           "curaDefinitionName": "SideKick 747",
           "toolhead": "Meteor 175 or Meteor 285",
           "firmwareToolheadName": "Galaxy Series",
-          "options": {
-            "lcd": "with"
-          },
-          "firmware": {
-            "version": "2.1.3.0.48",
-            "file": "SideKick_747/Marlin_SideKick_747_Galaxy_2.1.3.0.48_29556655fa.hex",
-            "format": "hex",
-            "presentInCuraInstall": true
-          }
+          "options": {},
+          "firmwareId": "sidekick747_galaxy"
+        }
+      ]
+    },
+    {
+      "id": "taz_8_xt_lbv2",
+      "name": "TAZ 8 XT Long Bed v2",
+      "configurations": [
+        {
+          "definitionId": "taz_8_xt_lbv2_galaxy",
+          "curaDefinitionName": "TAZ 8 XT Long Bed v2",
+          "toolhead": "Meteor 175, Meteor 285, or Asteroid 285",
+          "firmwareToolheadName": "Galaxy Series",
+          "options": {},
+          "firmwareId": "taz8xt_longbed_galaxy"
+        },
+        {
+          "definitionId": "taz_8_xt_lbv2_twnb175",
+          "curaDefinitionName": "TAZ 8 XT Long Bed v2 | Twin Nebula",
+          "toolhead": "Twin Nebula 175 or Twin Nebula 285",
+          "firmwareToolheadName": "Galaxy Dual Extruder",
+          "options": {},
+          "firmwareId": "taz8xt_longbed_galaxy_dual"
         }
       ]
     }
