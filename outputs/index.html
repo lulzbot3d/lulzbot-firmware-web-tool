@@ -189,6 +189,14 @@
         display: block;
         margin: 3px 0 8px;
       }
+      .firmware-sources {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 10px;
+      }
+      .firmware-source-or { color: var(--muted); font-size: 12px; }
       .filebox {
         border: 1px dashed #bcc9be;
         border-radius: 10px;
@@ -481,8 +489,8 @@
       <h1>Update Your LulzBot Firmware</h1>
       <p class="intro">
         Firmware controls your 3D printer's mechanical functions.  Update it to gain new features and boost performance.
-        Choose a local firmware image, connect to a supported LulzBot printer
-        over USB, and write it directly from your browser.
+        Find matching firmware by printer and options, or choose a local image.
+        Connect to a supported LulzBot printer over USB and flash from your browser.
       </p>
       <div class="warning">
         <span class="warn-icon">⚠</span>
@@ -502,35 +510,37 @@
       </div>
       <div class="layout">
         <section class="card">
-          <h2>Manual Flash</h2>
+          <h2>Firmware flasher</h2>
           <p class="sub">
-            Choose a firmware image, connect the printer, then write and
-            verify.
+            Choose firmware, connect the printer, then write and verify.
           </p>
           <div class="step">
             <span class="num">1</span>
             <div class="stepbody">
               <span class="label">Firmware image</span>
+              <div class="firmware-sources">
+                <button class="btn" id="findFirmware" type="button">
+                  Find firmware by printer and options
+                </button>
+                <span class="firmware-source-or" aria-hidden="true">or</span>
+                <label class="btn" id="chooseFile" for="firmware">
+                  Choose a local file on this PC
+                </label>
+              </div>
               <div class="filebox">
                 <div class="filemark">▧</div>
                 <div class="filemeta">
                   <b id="filename">No file selected</b
-                  ><span id="filesize">Select a .bin or .hex firmware image</span>
+                  ><span id="filesize">Choose firmware online or from this PC</span>
                 </div>
-                <label
-                  class="btn"
-                  id="chooseFile"
-                  for="firmware"
-                  >Choose file</label
-                ><input
+                <input
                   id="firmware"
                   type="file"
                   accept=".bin,.hex,application/octet-stream,text/plain"
                 />
               </div>
               <div class="help">
-                The browser reads the file locally. It is not uploaded to a
-                server.
+                The selected firmware is loaded into your browser. This page does not upload it to a server.
               </div>
             </div>
           </div>
@@ -635,7 +645,7 @@
         </aside>
       </div>
       <div class="foot">
-        Local only · No firmware upload · Web Serial support required
+        Firmware is read in your browser · Web Serial support required
       </div>
     </main>
     <script src="bossa-bundle.js"></script>
@@ -651,6 +661,8 @@
         busy = false,
         chipValidated = false,
         bootloaderSelectionRequired = false,
+        selectedFirmwareSource = null,
+        firmwareSelectorWindow = null,
         phaseBase = 0,
         phaseScale = 45;
       const EXPECTED_CHIP = 0x285e0a60,
@@ -691,6 +703,7 @@
           canFlash || canSelectBootloader || canStartAvrFlash
         );
         $("firmware").disabled = busy;
+        $("findFirmware").disabled = busy;
         $("chooseFile").classList.toggle("disabled", busy);
         $("connect").disabled = Boolean(
           !navigator.serial ||
@@ -698,10 +711,8 @@
             (!file && !port) ||
             (bootloaderSelectionRequired && !port),
         );
+        $("findFirmware").classList.toggle("next-action", !file && !busy);
         $("chooseFile").classList.toggle("next-action", !file && !busy);
-        $("firmware")
-          .closest(".filebox")
-          .classList.toggle("next-action", !file && !busy);
         $("connect").classList.toggle(
           "next-action",
           Boolean(file && !port && !bootloaderSelectionRequired && !busy),
@@ -825,8 +836,7 @@
           this.reader = this.writer = null;
         }
       }
-      $("firmware").addEventListener("change", async (e) => {
-        const nextFile = e.target.files[0] || null;
+      async function selectFirmwareFile(nextFile, source) {
         const extension = nextFile?.name.split(".").pop().toLowerCase();
         const nextType =
           extension === "bin" || extension === "hex" ? extension : null;
@@ -844,12 +854,15 @@
 
         file = nextFile;
         firmwareType = nextType;
+        selectedFirmwareSource = source;
+        $("ack").checked = false;
         $("filename").textContent = file ? file.name : "No file selected";
         $("filesize").textContent = file
-          ? `${(file.size / 1024).toFixed(1)} KB · ${file.size.toLocaleString()} bytes`
-          : "Select a .bin or .hex firmware image";
+          ? `${source === "catalog" ? "Printer selection · " : "This PC · "}${(file.size / 1024).toFixed(1)} KB · ${file.size.toLocaleString()} bytes`
+          : "Choose firmware online or from this PC";
         if (file && !firmwareType) {
           file = null;
+          selectedFirmwareSource = null;
           $("firmware").value = "";
           $("filename").textContent = "No file selected";
           $("filesize").textContent = "Choose a raw .bin or Intel HEX .hex image";
@@ -857,6 +870,7 @@
         } else if (file && firmwareType === "bin" && file.size > MAX_FLASH_BYTES) {
           file = null;
           firmwareType = null;
+          selectedFirmwareSource = null;
           $("firmware").value = "";
           $("filename").textContent = "No file selected";
           $("filesize").textContent = "Maximum .bin image size is 512 KB";
@@ -864,6 +878,7 @@
         } else if (file && firmwareType === "hex" && file.size > MAX_HEX_FILE_BYTES) {
           file = null;
           firmwareType = null;
+          selectedFirmwareSource = null;
           $("firmware").value = "";
           $("filename").textContent = "No file selected";
           $("filesize").textContent = "Maximum Intel HEX file size is 2 MB";
@@ -875,6 +890,57 @@
               : "Select a file and connect a board to continue.",
           );
         update();
+      }
+      $("firmware").addEventListener("change", async (event) => {
+        const nextFile = event.target.files[0] || null;
+        event.target.value = "";
+        await selectFirmwareFile(nextFile, "local");
+      });
+      $("findFirmware").addEventListener("click", () => {
+        if (firmwareSelectorWindow && !firmwareSelectorWindow.closed) {
+          firmwareSelectorWindow.focus();
+          return;
+        }
+        const selectorUrl = new URL("firmware-selector.html?selectFirmware=1", location.href);
+        firmwareSelectorWindow = window.open(
+          selectorUrl.href,
+          "lulzbotFirmwareSelector",
+          "popup,width=1120,height=860,resizable=yes,scrollbars=yes",
+        );
+        if (!firmwareSelectorWindow) {
+          say("Allow popups for this page to choose firmware by printer and options.", "error");
+        }
+      });
+      window.addEventListener("message", async (event) => {
+        if (event.origin !== location.origin || event.source !== firmwareSelectorWindow) return;
+        const selection = event.data;
+        if (!selection || selection.type !== "lulzbot-firmware-selection") return;
+        try {
+          const firmwareUrl = new URL(selection.url);
+          const localFirmwareRoot = new URL("firmware/", location.href);
+          const validFilename = /^[A-Za-z0-9_.-]+\.(bin|hex)$/i.test(selection.fileName || "");
+          if (
+            !validFilename
+            || firmwareUrl.origin !== location.origin
+            || !firmwareUrl.pathname.startsWith(localFirmwareRoot.pathname)
+          ) {
+            throw new Error("The selector returned an invalid local firmware reference.");
+          }
+          say("Loading the selected firmware into your browser…");
+          const response = await fetch(firmwareUrl.href, { cache: "no-store" });
+          if (!response.ok) {
+            throw new Error(`Could not load ${selection.fileName} from the local firmware folder (HTTP ${response.status}).`);
+          }
+          const blob = await response.blob();
+          await selectFirmwareFile(
+            new File([blob], selection.fileName, { type: "application/octet-stream" }),
+            "catalog",
+          );
+          if (file) log(`Selected from firmware catalog: ${selection.fileName}`);
+        } catch (error) {
+          log(error.message);
+          say(error.message, "error");
+        }
       });
       $("ack").addEventListener("change", update);
       if (!("serial" in navigator)) {
