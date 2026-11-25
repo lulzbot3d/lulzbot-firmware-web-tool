@@ -76,7 +76,6 @@
       .kicker { margin: 0 0 5px; color: var(--green-dark); font-size: 11px; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
       .result h2 { margin: 0 0 14px; font-size: 20px; overflow-wrap: anywhere; }
       .choose-firmware {
-        margin-top: 18px;
         padding: 11px 15px;
         border: 1px solid #788814;
         border-radius: 8px;
@@ -89,6 +88,20 @@
       }
       .choose-firmware:hover { background: #b2c823; }
       .choose-firmware:disabled { opacity: .65; cursor: wait; }
+      .firmware-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+      .download-firmware {
+        display: inline-flex;
+        align-items: center;
+        padding: 11px 15px;
+        border: 1px solid #cdd4cc;
+        border-radius: 8px;
+        background: #fff;
+        color: #29322b;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .download-firmware:hover { background: #f4f7f3; }
       dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 8px 14px; margin: 0; font-size: 13px; }
       dt { color: var(--muted); }
       dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
@@ -571,26 +584,36 @@
         if (match.firmwareToolheadName) addDetail(details, "Firmware profile", match.firmwareToolheadName);
         resultElement.append(details);
 
+        const fileName = firmware.file.split("/").pop();
+        const firmwareUrl = new URL("./firmware/" + encodeURIComponent(fileName), location.href);
+        const firmwareActions = document.createElement("div");
+        firmwareActions.className = "firmware-actions";
+
+        const downloadLink = document.createElement("a");
+        downloadLink.className = "download-firmware";
+        downloadLink.href = firmwareUrl.href;
+        downloadLink.download = fileName;
+        downloadLink.textContent = "Download firmware";
+
         if (selectionMode && window.opener && !window.opener.closed) {
           const chooseButton = document.createElement("button");
           chooseButton.className = "choose-firmware";
           chooseButton.type = "button";
           chooseButton.textContent = "Use this firmware";
           chooseButton.addEventListener("click", () => {
-            const fileName = firmware.file.split("/").pop();
-            const url = new URL("./firmware/" + encodeURIComponent(fileName), location.href);
             window.opener.postMessage({
               type: "lulzbot-firmware-selection",
               firmwareId: firmware.id,
               fileName,
-              url: url.href,
+              url: firmwareUrl.href,
             }, location.origin);
             chooseButton.disabled = true;
             chooseButton.textContent = "Returning selection…";
             window.setTimeout(() => window.close(), 200);
           });
-          resultElement.append(chooseButton);
+          firmwareActions.append(chooseButton);
         }
+        firmwareActions.append(downloadLink);
 
         if (firmware.presentInCuraInstall === false) {
           resultElement.append(textElement(
@@ -599,6 +622,7 @@
             "notice warning",
           ));
         }
+        resultElement.append(firmwareActions);
         setStep("#options-step", "complete");
       }
 

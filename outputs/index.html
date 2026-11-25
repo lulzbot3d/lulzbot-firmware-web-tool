@@ -902,6 +902,7 @@
           return;
         }
         const selectorUrl = new URL("firmware-selector.html?selectFirmware=1", location.href);
+        selectorUrl.searchParams.set("opened", String(Date.now()));
         firmwareSelectorWindow = window.open(
           selectorUrl.href,
           "lulzbotFirmwareSelector",
